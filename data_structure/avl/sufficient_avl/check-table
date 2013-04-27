@@ -1,0 +1,68 @@
+#! /bin/sh -e
+
+# GNU libavl - library for manipulation of binary trees.
+# Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004 Free Software
+# Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to: Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
+# 02110-1301 USA.
+
+if test "$1" = ""; then
+    echo "check-table, a script for testing libavl table routines."
+    echo "Usage: $0 TEST-PGM"
+    echo "TEST-PGM is the name of the libavl table test program"
+    echo "  to run, such as \`bst-test'."
+    exit 1
+fi
+
+test=$1
+
+echo -n 'Testing with trees of various sizes'
+for d in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 20 24 31 32 42 43 46 \
+	47 48 49 50 63 64 65 120 126 127 128 129 175 257; do
+	echo -n .
+	$test --quiet --size=$d --seed=0
+done
+echo " done"
+
+echo -n 'Testing different insertion and deletion orders'
+for i in random ascending descending balanced zigzag asc-shifted; do
+    for d in random same reverse; do
+	$test --quiet --repeat=64 --size=64 --seed=0 --insert=$i --delete=$d
+        echo -n .
+    done
+done
+echo " done"
+
+echo -n 'Testing behavior on allocation failure'
+common="--quiet --seed=0 --alloc=fail-0 --incr=1 --repeat=155"
+echo -n .; $test $common
+echo -n .; $test $common --insert=ascending --delete=same
+echo -n .; $test $common --insert=ascending --delete=reverse
+echo -n .; $test $common --size=64
+echo -n .; $test $common --size=64 --insert=ascending --delete=same
+echo -n .; $test $common --size=64 --insert=ascending --delete=reverse
+echo " done"
+
+echo -n 'Testing overflow behavior'
+for d in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 20 24 31 32 42 43 46 \
+	47 48 49 50 63 64 65 120 126 127 128; do
+	echo -n .
+	$test --quiet --size=$d --seed=0 --test=overflow --insert=ascending
+	$test --quiet --size=$d --seed=0 --test=overflow --insert=descending
+	$test --quiet --size=$d --seed=0 --test=overflow --insert=zigzag
+	$test --quiet --size=$d --seed=0 --test=overflow --insert=asc-shifted
+done
+echo " done"

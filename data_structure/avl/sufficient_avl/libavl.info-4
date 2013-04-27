@@ -1,0 +1,3000 @@
+This is libavl.info, produced by makeinfo version 4.8 from libavl.texi.
+
+
+File: libavl.info,  Node: Answers for Chapter 9,  Next: Answers for Chapter 10,  Prev: Answers for Chapter 8,  Up: Answers to All the Exercises
+
+Chapter 9
+=========
+
+Section 9.3.3
+-------------
+
+1.  For a brief explanation of an algorithm similar to the one here, see
+*Note Inserting into a PRB Tree::.
+
+670. <TRB item insertion function, without stack 670> =
+<*Note Find parent of a TBST node; tbst => trb: 329.>
+
+void **
+trb_probe (struct trb_table *tree, void *item)
+{
+  struct trb_node *p; /* Traverses tree looking for insertion point. */
+  struct trb_node *n; /* Newly inserted node. */
+  int dir;            /* Side of p on which n is inserted. */
+
+  assert (tree != NULL && item != NULL);
+
+  <*Note Step 1: Search TBST for insertion point; tbst => trb: 257.>
+  <*Note Step 2: Insert TRB node: 341.>
+  p = n;
+  for (;;)
+    {
+      struct trb_node *f, *g;
+
+      f = find_parent (tree, p);
+      if (f == (struct trb_node *) &tree->trb_root
+          || f->trb_color == TRB_BLACK)
+        break;
+
+      g = find_parent (tree, f);
+      if (g == (struct trb_node *) &tree->trb_root)
+        break;
+
+      if (g->trb_link[0] == f)
+        {
+          struct trb_node *y = g->trb_link[1];
+          if (g->trb_tag[1] == TRB_CHILD && y->trb_color == TRB_RED)
+            {
+              f->trb_color = y->trb_color = TRB_BLACK;
+              g->trb_color = TRB_RED;
+              p = g;
+            }
+          else
+            {
+              struct trb_node *c, *x;
+
+              if (f->trb_link[0] == p)
+                y = f;
+              else
+                {
+                  x = f;
+                  y = x->trb_link[1];
+                  x->trb_link[1] = y->trb_link[0];
+                  y->trb_link[0] = x;
+                  g->trb_link[0] = y;
+
+                  if (y->trb_tag[0] == TRB_THREAD)
+                    {
+                      y->trb_tag[0] = TRB_CHILD;
+                      x->trb_tag[1] = TRB_THREAD;
+                      x->trb_link[1] = y;
+                    }
+                }
+
+              c = find_parent (tree, g);
+              c->trb_link[c->trb_link[0] != g] = y;
+
+              x = g;
+              x->trb_color = TRB_RED;
+              y->trb_color = TRB_BLACK;
+
+              x->trb_link[0] = y->trb_link[1];
+              y->trb_link[1] = x;
+
+              if (y->trb_tag[1] == TRB_THREAD)
+                {
+                  y->trb_tag[1] = TRB_CHILD;
+                  x->trb_tag[0] = TRB_THREAD;
+                  x->trb_link[0] = y;
+                }
+              break;
+            }
+        }
+      else
+        {
+          struct trb_node *y = g->trb_link[0];
+          if (g->trb_tag[0] == TRB_CHILD && y->trb_color == TRB_RED)
+            {
+              f->trb_color = y->trb_color = TRB_BLACK;
+              g->trb_color = TRB_RED;
+              p = g;
+            }
+          else
+            {
+              struct trb_node *c, *x;
+
+              if (f->trb_link[1] == p)
+                y = f;
+              else
+                {
+                  x = f;
+                  y = x->trb_link[0];
+                  x->trb_link[0] = y->trb_link[1];
+                  y->trb_link[1] = x;
+                  g->trb_link[1] = y;
+
+                  if (y->trb_tag[1] == TRB_THREAD)
+                    {
+                      y->trb_tag[1] = TRB_CHILD;
+                      x->trb_tag[0] = TRB_THREAD;
+                      x->trb_link[0] = y;
+                    }
+                }
+
+              c = find_parent (tree, g);
+              c->trb_link[c->trb_link[0] != g] = y;
+
+              x = g;
+              x->trb_color = TRB_RED;
+              y->trb_color = TRB_BLACK;
+
+              x->trb_link[1] = y->trb_link[0];
+              y->trb_link[0] = x;
+
+              if (y->trb_tag[0] == TRB_THREAD)
+                {
+                  y->trb_tag[0] = TRB_CHILD;
+                  x->trb_tag[1] = TRB_THREAD;
+                  x->trb_link[1] = y;
+                }
+              break;
+            }
+        }
+    }
+  tree->trb_root->trb_color = TRB_BLACK;
+
+  return &n->trb_data;
+}
+
+Section 9.4.2
+-------------
+
+1.
+
+671. <Case 4 in TRB deletion, alternate version 671> =
+struct trb_node *s;
+
+da[k] = 1;
+pa[k++] = p;
+for (;;)
+  {
+    da[k] = 0;
+    pa[k++] = r;
+    s = r->trb_link[0];
+    if (s->trb_tag[0] == TRB_THREAD)
+      break;
+
+    r = s;
+  }
+
+p->trb_data = s->trb_data;
+
+if (s->trb_tag[1] == TRB_THREAD)
+  {
+    r->trb_tag[0] = TRB_THREAD;
+    r->trb_link[0] = p;
+  }
+else
+  {
+    struct trb_node *t = r->trb_link[0] = s->trb_link[1];
+    while (t->trb_tag[0] == TRB_CHILD)
+      t = t->trb_link[0];
+    t->trb_link[0] = p;
+  }
+
+p = s;
+
+Section 9.4.5
+-------------
+
+1.  The code used in the rebalancing loop is related to <*Note Step 3:
+Rebalance tree after PRB deletion: 573.>.  Variable x is initialized by
+step 2 here, though, because otherwise the pseudo-root node would be
+required to have a trb_tag[] member.
+
+672. <TRB item deletion function, without stack 672> =
+<*Note Find parent of a TBST node; tbst => trb: 329.>
+
+void *
+trb_delete (struct trb_table *tree, const void *item)
+{
+  struct trb_node *p; /* Node to delete. */
+  struct trb_node *q; /* Parent of p. */
+
+  struct trb_node *x; /* Node we might want to recolor red (maybe NULL). */
+  struct trb_node *f; /* Parent of x. */
+  struct trb_node *g; /* Parent of f. */
+
+  int dir, cmp;
+
+  assert (tree != NULL && item != NULL);
+
+  <*Note Step 1: Search TAVL tree for item to delete; tavl => trb: 314.>
+  if (p->trb_tag[1] == TRB_THREAD)
+    {
+      if (p->trb_tag[0] == TRB_CHILD)
+        {
+          struct trb_node *t = p->trb_link[0];
+          while (t->trb_tag[1] == TRB_CHILD)
+            t = t->trb_link[1];
+          t->trb_link[1] = p->trb_link[1];
+          x = q->trb_link[dir] = p->trb_link[0];
+        }
+      else
+        {
+          q->trb_link[dir] = p->trb_link[dir];
+          if (q != (struct trb_node *) &tree->trb_root)
+            q->trb_tag[dir] = TRB_THREAD;
+          x = NULL;
+        }
+      f = q;
+    }
+  else
+    {
+      enum trb_color t;
+      struct trb_node *r = p->trb_link[1];
+
+      if (r->trb_tag[0] == TRB_THREAD)
+        {
+          r->trb_link[0] = p->trb_link[0];
+          r->trb_tag[0] = p->trb_tag[0];
+          if (r->trb_tag[0] == TRB_CHILD)
+            {
+              struct trb_node *t = r->trb_link[0];
+              while (t->trb_tag[1] == TRB_CHILD)
+                t = t->trb_link[1];
+              t->trb_link[1] = r;
+            }
+          q->trb_link[dir] = r;
+          x = r->trb_tag[1] == TRB_CHILD ? r->trb_link[1] : NULL;
+          t = r->trb_color;
+          r->trb_color = p->trb_color;
+          p->trb_color = t;
+          f = r;
+          dir = 1;
+        }
+      else
+        {
+          struct trb_node *s;
+
+          for (;;)
+            {
+              s = r->trb_link[0];
+              if (s->trb_tag[0] == TRB_THREAD)
+                break;
+
+              r = s;
+            }
+
+          if (s->trb_tag[1] == TRB_CHILD)
+            x = r->trb_link[0] = s->trb_link[1];
+          else
+            {
+              r->trb_link[0] = s;
+              r->trb_tag[0] = TRB_THREAD;
+              x = NULL;
+            }
+
+          s->trb_link[0] = p->trb_link[0];
+          if (p->trb_tag[0] == TRB_CHILD)
+            {
+              struct trb_node *t = p->trb_link[0];
+              while (t->trb_tag[1] == TRB_CHILD)
+                t = t->trb_link[1];
+              t->trb_link[1] = s;
+
+              s->trb_tag[0] = TRB_CHILD;
+            }
+
+          s->trb_link[1] = p->trb_link[1];
+          s->trb_tag[1] = TRB_CHILD;
+
+          t = s->trb_color;
+          s->trb_color = p->trb_color;
+          p->trb_color = t;
+
+          q->trb_link[dir] = s;
+          f = r;
+          dir = 0;
+        }
+    }
+
+  if (p->trb_color == TRB_BLACK)
+    {
+      for (;;)
+        {
+          if (x != NULL && x->trb_color == TRB_RED)
+            {
+              x->trb_color = TRB_BLACK;
+              break;
+            }
+          if (f == (struct trb_node *) &tree->trb_root)
+            break;
+
+          g = find_parent (tree, f);
+
+          if (dir == 0)
+            {
+              struct trb_node *w = f->trb_link[1];
+
+              if (w->trb_color == TRB_RED)
+                {
+                  w->trb_color = TRB_BLACK;
+                  f->trb_color = TRB_RED;
+
+                  f->trb_link[1] = w->trb_link[0];
+                  w->trb_link[0] = f;
+                  g->trb_link[g->trb_link[0] != f] = w;
+
+                  g = w;
+                  w = f->trb_link[1];
+                }
+
+              if ((w->trb_tag[0] == TRB_THREAD
+                   || w->trb_link[0]->trb_color == TRB_BLACK)
+                  && (w->trb_tag[1] == TRB_THREAD
+                      || w->trb_link[1]->trb_color == TRB_BLACK))
+                w->trb_color = TRB_RED;
+              else
+                {
+                  if (w->trb_tag[1] == TRB_THREAD
+                      || w->trb_link[1]->trb_color == TRB_BLACK)
+                    {
+                      struct trb_node *y = w->trb_link[0];
+                      y->trb_color = TRB_BLACK;
+                      w->trb_color = TRB_RED;
+                      w->trb_link[0] = y->trb_link[1];
+                      y->trb_link[1] = w;
+                      w = f->trb_link[1] = y;
+
+                      if (w->trb_tag[1] == TRB_THREAD)
+                        {
+                          w->trb_tag[1] = TRB_CHILD;
+                          w->trb_link[1]->trb_tag[0] = TRB_THREAD;
+                          w->trb_link[1]->trb_link[0] = w;
+                        }
+                    }
+
+                  w->trb_color = f->trb_color;
+                  f->trb_color = TRB_BLACK;
+                  w->trb_link[1]->trb_color = TRB_BLACK;
+
+                  f->trb_link[1] = w->trb_link[0];
+                  w->trb_link[0] = f;
+                  g->trb_link[g->trb_link[0] != f] = w;
+
+                  if (w->trb_tag[0] == TRB_THREAD)
+                    {
+                      w->trb_tag[0] = TRB_CHILD;
+                      f->trb_tag[1] = TRB_THREAD;
+                      f->trb_link[1] = w;
+                    }
+                  break;
+                }
+            }
+          else
+            {
+              struct trb_node *w = f->trb_link[0];
+
+              if (w->trb_color == TRB_RED)
+                {
+                  w->trb_color = TRB_BLACK;
+                  f->trb_color = TRB_RED;
+
+                  f->trb_link[0] = w->trb_link[1];
+                  w->trb_link[1] = f;
+                  g->trb_link[g->trb_link[0] != f] = w;
+
+                  g = w;
+                  w = f->trb_link[0];
+                }
+
+              if ((w->trb_tag[0] == TRB_THREAD
+                   || w->trb_link[0]->trb_color == TRB_BLACK)
+                  && (w->trb_tag[1] == TRB_THREAD
+                      || w->trb_link[1]->trb_color == TRB_BLACK))
+                w->trb_color = TRB_RED;
+              else
+                {
+                  if (w->trb_tag[0] == TRB_THREAD
+                      || w->trb_link[0]->trb_color == TRB_BLACK)
+                    {
+                      struct trb_node *y = w->trb_link[1];
+                      y->trb_color = TRB_BLACK;
+                      w->trb_color = TRB_RED;
+                      w->trb_link[1] = y->trb_link[0];
+                      y->trb_link[0] = w;
+                      w = f->trb_link[0] = y;
+
+                      if (w->trb_tag[0] == TRB_THREAD)
+                        {
+                          w->trb_tag[0] = TRB_CHILD;
+                          w->trb_link[0]->trb_tag[1] = TRB_THREAD;
+                          w->trb_link[0]->trb_link[1] = w;
+                        }
+                    }
+
+                  w->trb_color = f->trb_color;
+                  f->trb_color = TRB_BLACK;
+                  w->trb_link[0]->trb_color = TRB_BLACK;
+
+                  f->trb_link[0] = w->trb_link[1];
+                  w->trb_link[1] = f;
+                  g->trb_link[g->trb_link[0] != f] = w;
+
+                  if (w->trb_tag[1] == TRB_THREAD)
+                    {
+                      w->trb_tag[1] = TRB_CHILD;
+                      f->trb_tag[0] = TRB_THREAD;
+                      f->trb_link[0] = w;
+                    }
+                  break;
+                }
+            }
+
+          x = f;
+          f = find_parent (tree, x);
+          if (f == (struct trb_node *) &tree->trb_root)
+            break;
+
+          dir = f->trb_link[0] != x;
+        }
+    }
+
+  tree->trb_alloc->libavl_free (tree->trb_alloc, p);
+  tree->trb_count--;
+  return (void *) item;
+}
+
+
+File: libavl.info,  Node: Answers for Chapter 10,  Next: Answers for Chapter 11,  Prev: Answers for Chapter 9,  Up: Answers to All the Exercises
+
+Chapter 10
+==========
+
+1.  If we already have right-threaded trees, then we can get the
+benefits of a left-threaded tree just by reversing the sense of the
+comparison function, so there is no additional benefit to left-threaded
+trees.
+
+Section 10.5.1
+--------------
+
+1.
+
+673. <Case 4 in right-looking RTBST deletion, alternate version 673> =
+struct rtbst_node *s = r->rtbst_link[0];
+while (s->rtbst_link[0] != NULL)
+  {
+    r = s;
+    s = r->rtbst_link[0];
+  }
+
+p->rtbst_data = s->rtbst_data;
+
+if (s->rtbst_rtag == RTBST_THREAD)
+  r->rtbst_link[0] = NULL;
+else
+  r->rtbst_link[0] = s->rtbst_link[1];
+
+p = s;
+
+Section 10.5.2
+--------------
+
+1.  This alternate version is not really an improvement: it runs up
+against the same problem as right-looking deletion, so it sometimes
+needs to search for a predecessor.
+
+674. <Case 4 in left-looking RTBST deletion, alternate version 674> =
+struct rtbst_node *s = r->rtbst_link[1];
+while (s->rtbst_rtag == RTBST_CHILD)
+  {
+    r = s;
+    s = r->rtbst_link[1];
+  }
+
+p->rtbst_data = s->rtbst_data;
+
+if (s->rtbst_link[0] != NULL)
+  {
+    struct rtbst_node *t = s->rtbst_link[0];
+    while (t->rtbst_rtag == RTBST_CHILD)
+      t = t->rtbst_link[1];
+    t->rtbst_link[1] = p;
+    r->rtbst_link[1] = s->rtbst_link[0];
+  }
+else
+  {
+    r->rtbst_link[1] = p;
+    r->rtbst_rtag = RTBST_THREAD;
+  }
+
+p = s;
+
+
+File: libavl.info,  Node: Answers for Chapter 11,  Next: Answers for Chapter 13,  Prev: Answers for Chapter 10,  Up: Answers to All the Exercises
+
+Chapter 11
+==========
+
+Section 11.3
+------------
+
+1.
+
+/* Rotates right at *yp. */
+static void
+rotate_right (struct rtbst_node **yp)
+{
+  struct rtbst_node *y = *yp;
+  struct rtbst_node *x = y->rtbst_link[0];
+  if (x->rtbst_rtag[1] == RTBST_THREAD)
+    {
+      x->rtbst_rtag = RTBST_CHILD;
+      y->rtbst_link[0] = NULL;
+    }
+  else
+    y->rtbst_link[0] = x->rtbst_link[1];
+  x->rtbst_link[1] = y;
+  *yp = x;
+}
+
+/* Rotates left at *xp. */
+static void
+rotate_left (struct rtbst_node **xp)
+{
+  struct rtbst_node *x = *xp;
+  struct rtbst_node *y = x->rtbst_link[1];
+  if (y->rtbst_link[0] == NULL)
+    {
+      x->rtbst_rtag = RTBST_THREAD;
+      x->rtbst_link[1] = y;
+    }
+  else
+    x->rtbst_link[1] = y->rtbst_link[0];
+  y->rtbst_link[0] = x;
+  *xp = y;
+}
+
+Section 11.5.4
+--------------
+
+1.  There is no general efficient algorithm to find the parent of a
+node in an RTAVL tree.  The lack of left threads means that half the
+time we must do a full search from the top of the tree.  This would
+increase the execution time for deletion unacceptably.
+
+2.
+
+675. <Step 2: Delete RTAVL node, right-looking 675> =
+if (p->rtavl_rtag == RTAVL_THREAD)
+  {
+    if (p->rtavl_link[0] != NULL)
+      {
+        <*Note Case 1 in RTAVL deletion, right-looking: 676.>
+      }
+    else
+      {
+        <*Note Case 2 in RTAVL deletion, right-looking: 677.>
+      }
+  }
+else
+  {
+    struct rtavl_node *r = p->rtavl_link[1];
+    if (r->rtavl_link[0] == NULL)
+      {
+        <*Note Case 3 in RTAVL deletion, right-looking: 678.>
+      }
+    else
+      {
+        <*Note Case 4 in RTAVL deletion, right-looking: 679.>
+      }
+  }
+
+tree->rtavl_alloc->libavl_free (tree->rtavl_alloc, p);
+
+676. <Case 1 in RTAVL deletion, right-looking 676> =
+struct rtavl_node *t = p->rtavl_link[0];
+while (t->rtavl_rtag == RTAVL_CHILD)
+  t = t->rtavl_link[1];
+t->rtavl_link[1] = p->rtavl_link[1];
+pa[k - 1]->rtavl_link[da[k - 1]] = p->rtavl_link[0];
+   This code is included in *Note 675::.
+
+677. <Case 2 in RTAVL deletion, right-looking 677> =
+pa[k - 1]->rtavl_link[da[k - 1]] = p->rtavl_link[da[k - 1]];
+if (da[k - 1] == 1)
+  pa[k - 1]->rtavl_rtag = RTAVL_THREAD;
+   This code is included in *Note 675::.
+
+678. <Case 3 in RTAVL deletion, right-looking 678> =
+r->rtavl_link[0] = p->rtavl_link[0];
+if (r->rtavl_link[0] != NULL)
+  {
+    struct rtavl_node *t = r->rtavl_link[0];
+    while (t->rtavl_rtag == RTAVL_CHILD)
+      t = t->rtavl_link[1];
+    t->rtavl_link[1] = r;
+  }
+pa[k - 1]->rtavl_link[da[k - 1]] = r;
+r->rtavl_balance = p->rtavl_balance;
+da[k] = 1;
+pa[k++] = r;
+   This code is included in *Note 675::.
+
+679. <Case 4 in RTAVL deletion, right-looking 679> =
+struct rtavl_node *s;
+int j = k++;
+
+for (;;)
+  {
+    da[k] = 0;
+    pa[k++] = r;
+    s = r->rtavl_link[0];
+    if (s->rtavl_link[0] == NULL)
+      break;
+
+    r = s;
+  }
+
+da[j] = 1;
+pa[j] = pa[j - 1]->rtavl_link[da[j - 1]] = s;
+
+if (s->rtavl_rtag == RTAVL_CHILD)
+  r->rtavl_link[0] = s->rtavl_link[1];
+else
+  r->rtavl_link[0] = NULL;
+
+if (p->rtavl_link[0] != NULL)
+  {
+    struct rtavl_node *t = p->rtavl_link[0];
+    while (t->rtavl_rtag == RTAVL_CHILD)
+      t = t->rtavl_link[1];
+    t->rtavl_link[1] = s;
+  }
+
+s->rtavl_link[0] = p->rtavl_link[0];
+s->rtavl_link[1] = p->rtavl_link[1];
+s->rtavl_rtag = RTAVL_CHILD;
+s->rtavl_balance = p->rtavl_balance;
+   This code is included in *Note 675::.
+
+3.
+
+680. <Case 4 in RTAVL deletion, alternate version 680> =
+struct rtavl_node *s;
+
+da[k] = 0;
+pa[k++] = p;
+for (;;)
+  {
+    da[k] = 1;
+    pa[k++] = r;
+    s = r->rtavl_link[1];
+    if (s->rtavl_rtag == RTAVL_THREAD)
+      break;
+    r = s;
+  }
+
+if (s->rtavl_link[0] != NULL)
+  {
+    struct rtavl_node *t = s->rtavl_link[0];
+    while (t->rtavl_rtag == RTAVL_CHILD)
+      t = t->rtavl_link[1];
+    t->rtavl_link[1] = p;
+  }
+
+p->rtavl_data = s->rtavl_data;
+if (s->rtavl_link[0] != NULL)
+  r->rtavl_link[1] = s->rtavl_link[0];
+else
+  {
+    r->rtavl_rtag = RTAVL_THREAD;
+    r->rtavl_link[1] = p;
+  }
+
+p = s;
+
+
+File: libavl.info,  Node: Answers for Chapter 13,  Next: Answers for Chapter 14,  Prev: Answers for Chapter 11,  Up: Answers to All the Exercises
+
+Chapter 13
+==========
+
+Section 13.4
+------------
+
+1.  No.  It would work, except for the important special case where q is
+the pseudo-root but p->pbst_parent is NULL.
+
+Section 13.7
+------------
+
+1.
+
+681. <PBST balance function, with integrated parent updates 681> =
+<*Note BST to vine function; bst => pbst: 90.>
+<*Note Vine to balanced PBST function, with parent updates: 682.>
+
+void
+pbst_balance (struct pbst_table *tree)
+{
+  assert (tree != NULL);
+
+  tree_to_vine (tree);
+  vine_to_tree (tree);
+}
+
+682. <Vine to balanced PBST function, with parent updates 682> =
+<*Note PBST compression function: 684.>
+
+static void
+vine_to_tree (struct pbst_table *tree)
+{
+  unsigned long vine;      /* Number of nodes in main vine. */
+  unsigned long leaves;    /* Nodes in incomplete bottom level, if any. */
+  int height;              /* Height of produced balanced tree. */
+  struct pbst_node *p, *q; /* Current visited node and its parent. */
+
+  <*Note Calculate leaves; bst => pbst: 92.>
+  <*Note Reduce vine general case to special case; bst => pbst: 93.>
+  <*Note Make special case vine into balanced tree and count height; bst => pbst: 94.>
+  <*Note Set parents of main vine: 683.>
+}
+   This code is included in *Note 681::.
+
+683. <Set parents of main vine 683> =
+for (q = NULL, p = tree->pbst_root; p != NULL; q = p, p = p->pbst_link[0])
+  p->pbst_parent = q;
+   This code is included in *Note 682::.
+
+684. <PBST compression function 684> =
+static void
+compress (struct pbst_node *root, unsigned long count)
+{
+  assert (root != NULL);
+
+  while (count--)
+    {
+      struct pbst_node *red = root->pbst_link[0];
+      struct pbst_node *black = red->pbst_link[0];
+
+      root->pbst_link[0] = black;
+      red->pbst_link[0] = black->pbst_link[1];
+      black->pbst_link[1] = red;
+      red->pbst_parent = black;
+      if (red->pbst_link[0] != NULL)
+        red->pbst_link[0]->pbst_parent = red;
+      root = black;
+    }
+}
+   This code is included in *Note 682::.
+
+
+File: libavl.info,  Node: Answers for Chapter 14,  Prev: Answers for Chapter 13,  Up: Answers to All the Exercises
+
+Chapter 14
+==========
+
+Section 14.2
+------------
+
+1.
+
+/* Rotates right at *yp. */
+static void
+rotate_right (struct pbst_node **yp)
+{
+  struct pbst_node *y = *yp;
+  struct pbst_node *x = y->pbst_link[0];
+  y->pbst_link[0] = x->pbst_link[1];
+  x->pbst_link[1] = y;
+  *yp = x;
+  x->pbst_parent = y->pbst_parent;
+  y->pbst_parent = x;
+  if (y->pbst_link[0] != NULL)
+    y->pbst_link[0]->pbst_parent = y;
+}
+
+/* Rotates left at *xp. */
+static void
+rotate_left (struct pbst_node **xp)
+{
+  struct pbst_node *x = *xp;
+  struct pbst_node *y = x->pbst_link[1];
+  x->pbst_link[1] = y->pbst_link[0];
+  y->pbst_link[0] = x;
+  *xp = y;
+  y->pbst_parent = x->pbst_parent;
+  x->pbst_parent = y;
+  if (x->pbst_link[1] != NULL)
+    x->pbst_link[1]->pbst_parent = x;
+}
+
+Section 14.4.2
+--------------
+
+1.  Yes.  Both code segments update the nodes along the direct path from
+y down to n, including node y but not node n.  The plain AVL code
+excluded node n by updating nodes as it moved down to them and making
+arrival at node n the loop's termination condition.  The PAVL code
+excludes node n by starting at it but updating the parent of each
+visited node instead of the node itself.
+
+   There still could be a problem at the edge case where no nodes'
+balance factors were to be updated, but there is no such case.  There
+is always at least one balance factor to update, because every inserted
+node has a parent whose balance factor is affected by its insertion.
+The one exception would be the first node inserted into an empty tree,
+but that was already handled as a special case.
+
+2.  Sure.  There is no parallel to Exercise 5.4.4-4 because q is never
+the pseudo-root.
+
+
+File: libavl.info,  Node: Catalogue of Algorithms,  Next: Index,  Prev: Answers to All the Exercises,  Up: Top
+
+Appendix F Catalogue of Algorithms
+**********************************
+
+This appendix lists all of the algorithms described and implemented in
+this book, along with page number references.  Each algorithm is listed
+under the least-specific type of tree to which it applies, which is not
+always the same as the place where it is introduced.  For instance,
+rotations on threaded trees can be used in any threaded tree, so they
+appear under "Threaded Binary Search Tree Algorithms", despite their
+formal introduction later within the threaded AVL tree chapter.
+
+   Sometimes multiple algorithms for accomplishing the same task are
+listed.  In this case, the different algorithms are qualified by a few
+descriptive words.  For the algorithm used in libavl, the description
+is enclosed by parentheses, and the description of each alternative
+algorithm is set off by a comma.
+
+Binary Search Tree Algorithms
+=============================
+
+Advancing a traverser:
+                                         *Note catalogue-entry-bst-17::
+
+Backing up a traverser:
+                                         *Note catalogue-entry-bst-18::
+
+Balancing:
+                                         *Note catalogue-entry-bst-27::
+
+Copying (iterative; robust):
+                                         *Note catalogue-entry-bst-23::
+
+Copying, iterative:
+                                         *Note catalogue-entry-bst-22::
+
+Copying, recursive:
+                                         *Note catalogue-entry-bst-21::
+
+Copying, recursive; robust, version 1:
+                                         *Note catalogue-entry-bst-46::
+
+Copying, recursive; robust, version 2:
+                                         *Note catalogue-entry-bst-47::
+
+Copying, recursive; robust, version 3:
+                                         *Note catalogue-entry-bst-48::
+
+Creation:
+                                          *Note catalogue-entry-bst-0::
+
+Deletion (iterative):
+                                          *Note catalogue-entry-bst-4::
+
+Deletion, by merging:
+                                          *Note catalogue-entry-bst-5::
+
+Deletion, special case for no left child:
+                                         *Note catalogue-entry-bst-40::
+
+Deletion, with data modification:
+                                         *Note catalogue-entry-bst-41::
+
+Destruction (by rotation):
+                                         *Note catalogue-entry-bst-24::
+
+Destruction, iterative:
+                                         *Note catalogue-entry-bst-26::
+
+Destruction, recursive:
+                                         *Note catalogue-entry-bst-25::
+
+Getting the current item in a traverser:
+                                         *Note catalogue-entry-bst-19::
+
+Initialization of traverser as copy:
+                                         *Note catalogue-entry-bst-15::
+
+Initialization of traverser to found item:
+                                         *Note catalogue-entry-bst-13::
+
+Initialization of traverser to greatest item:
+                                         *Note catalogue-entry-bst-12::
+
+Initialization of traverser to inserted item:
+                                         *Note catalogue-entry-bst-14::
+
+Initialization of traverser to least item:
+                                         *Note catalogue-entry-bst-11::
+
+Initialization of traverser to null item:
+                                         *Note catalogue-entry-bst-10::
+
+Insertion (iterative):
+                                          *Note catalogue-entry-bst-2::
+
+Insertion, as root:
+                                          *Note catalogue-entry-bst-3::
+
+Insertion, as root, of existing node in arbitrary subtree:
+                                         *Note catalogue-entry-bst-38::
+
+Insertion, as root, of existing node in arbitrary subtree, robustly:
+                                         *Note catalogue-entry-bst-39::
+
+Insertion, using pointer to pointer:
+                                         *Note catalogue-entry-bst-36::
+
+Join, iterative:
+                                         *Note catalogue-entry-bst-49::
+
+Join, recursive:
+                                         *Note catalogue-entry-bst-31::
+
+Refreshing of a traverser (general):
+                                          *Note catalogue-entry-bst-9::
+
+Refreshing of a traverser, optimized:
+                                         *Note catalogue-entry-bst-45::
+
+Replacing the current item in a traverser:
+                                         *Note catalogue-entry-bst-20::
+
+Rotation, left:
+                                         *Note catalogue-entry-bst-35::
+
+Rotation, left double:
+                                         *Note catalogue-entry-bst-32::
+
+Rotation, right:
+                                         *Note catalogue-entry-bst-34::
+
+Rotation, right double:
+                                         *Note catalogue-entry-bst-33::
+
+Search:
+                                          *Note catalogue-entry-bst-1::
+
+Traversal (iterative; convenient, reliable):
+                                         *Note catalogue-entry-bst-16::
+
+Traversal, iterative:
+                                          *Note catalogue-entry-bst-7::
+
+Traversal, iterative; convenient:
+                                          *Note catalogue-entry-bst-8::
+
+Traversal, iterative; convenient, reliable:
+                                         *Note catalogue-entry-bst-44::
+
+Traversal, iterative; with dynamic stack:
+                                         *Note catalogue-entry-bst-43::
+
+Traversal, level order:
+                                         *Note catalogue-entry-bst-37::
+
+Traversal, recursive:
+                                          *Note catalogue-entry-bst-6::
+
+Traversal, recursive; with nested function:
+                                         *Note catalogue-entry-bst-42::
+
+Vine compression:
+                                         *Note catalogue-entry-bst-30::
+
+Vine from tree:
+                                         *Note catalogue-entry-bst-28::
+
+Vine to balanced tree:
+                                         *Note catalogue-entry-bst-29::
+
+AVL Tree Algorithms
+===================
+
+Advancing a traverser:
+                                          *Note catalogue-entry-avl-7::
+
+Backing up a traverser:
+                                          *Note catalogue-entry-avl-8::
+
+Copying (iterative):
+                                          *Note catalogue-entry-avl-9::
+
+Deletion (iterative):
+                                          *Note catalogue-entry-avl-2::
+
+Deletion, with data modification:
+                                         *Note catalogue-entry-avl-11::
+
+Initialization of traverser to found item:
+                                          *Note catalogue-entry-avl-6::
+
+Initialization of traverser to greatest item:
+                                          *Note catalogue-entry-avl-5::
+
+Initialization of traverser to inserted item:
+                                          *Note catalogue-entry-avl-3::
+
+Initialization of traverser to least item:
+                                          *Note catalogue-entry-avl-4::
+
+Insertion (iterative):
+                                          *Note catalogue-entry-avl-0::
+
+Insertion, recursive:
+                                          *Note catalogue-entry-avl-1::
+
+Insertion, with bitmask:
+                                         *Note catalogue-entry-avl-10::
+
+Red-Black Tree Algorithms
+=========================
+
+Deletion (iterative):
+                                           *Note catalogue-entry-rb-2::
+
+Deletion, with data modification:
+                                           *Note catalogue-entry-rb-3::
+
+Insertion (iterative):
+                                           *Note catalogue-entry-rb-0::
+
+Insertion, initial black:
+                                           *Note catalogue-entry-rb-1::
+
+Threaded Binary Search Tree Algorithms
+======================================
+
+Advancing a traverser:
+                                        *Note catalogue-entry-tbst-10::
+
+Backing up a traverser:
+                                        *Note catalogue-entry-tbst-11::
+
+Balancing:
+                                        *Note catalogue-entry-tbst-15::
+
+Copying:
+                                        *Note catalogue-entry-tbst-13::
+
+Copying a node:
+                                        *Note catalogue-entry-tbst-12::
+
+Creation:
+                                         *Note catalogue-entry-tbst-0::
+
+Deletion (parent tracking):
+                                         *Note catalogue-entry-tbst-3::
+
+Deletion, with data modification:
+                                        *Note catalogue-entry-tbst-21::
+
+Deletion, with parent node algorithm:
+                                        *Note catalogue-entry-tbst-20::
+
+Destruction:
+                                        *Note catalogue-entry-tbst-14::
+
+Initialization of traverser as copy:
+                                         *Note catalogue-entry-tbst-9::
+
+Initialization of traverser to found item:
+                                         *Note catalogue-entry-tbst-7::
+
+Initialization of traverser to greatest item:
+                                         *Note catalogue-entry-tbst-6::
+
+Initialization of traverser to inserted item:
+                                         *Note catalogue-entry-tbst-8::
+
+Initialization of traverser to least item:
+                                         *Note catalogue-entry-tbst-5::
+
+Initialization of traverser to null item:
+                                         *Note catalogue-entry-tbst-4::
+
+Insertion:
+                                         *Note catalogue-entry-tbst-2::
+
+Parent of a node:
+                                        *Note catalogue-entry-tbst-19::
+
+Rotation, left:
+                                        *Note catalogue-entry-tbst-23::
+
+Rotation, right:
+                                        *Note catalogue-entry-tbst-22::
+
+Search:
+                                         *Note catalogue-entry-tbst-1::
+
+Vine compression:
+                                        *Note catalogue-entry-tbst-18::
+
+Vine from tree:
+                                        *Note catalogue-entry-tbst-16::
+
+Vine to balanced tree:
+                                        *Note catalogue-entry-tbst-17::
+
+Threaded AVL Tree Algorithms
+============================
+
+Copying a node:
+                                         *Note catalogue-entry-tavl-4::
+
+Deletion (without stack):
+                                         *Note catalogue-entry-tavl-3::
+
+Deletion, with data modification:
+                                         *Note catalogue-entry-tavl-6::
+
+Deletion, with stack:
+                                         *Note catalogue-entry-tavl-7::
+
+Insertion:
+                                         *Note catalogue-entry-tavl-0::
+
+Rotation, left double, version 1:
+                                         *Note catalogue-entry-tavl-1::
+
+Rotation, left double, version 2:
+                                         *Note catalogue-entry-tavl-5::
+
+Rotation, right double:
+                                         *Note catalogue-entry-tavl-2::
+
+Threaded Red-Black Tree Algorithms
+==================================
+
+Deletion (with stack):
+                                          *Note catalogue-entry-trb-1::
+
+Deletion, with data modification:
+                                          *Note catalogue-entry-trb-3::
+
+Deletion, without stack:
+                                          *Note catalogue-entry-trb-4::
+
+Insertion (with stack):
+                                          *Note catalogue-entry-trb-0::
+
+Insertion, without stack:
+                                          *Note catalogue-entry-trb-2::
+
+Right-Threaded Binary Search Tree Algorithms
+============================================
+
+Advancing a traverser:
+                                        *Note catalogue-entry-rtbst-7::
+
+Backing up a traverser:
+                                        *Note catalogue-entry-rtbst-8::
+
+Balancing:
+                                       *Note catalogue-entry-rtbst-12::
+
+Copying:
+                                       *Note catalogue-entry-rtbst-10::
+
+Copying a node:
+                                        *Note catalogue-entry-rtbst-9::
+
+Deletion (left-looking):
+                                        *Note catalogue-entry-rtbst-3::
+
+Deletion, right-looking:
+                                        *Note catalogue-entry-rtbst-2::
+
+Deletion, with data modification, left-looking:
+                                       *Note catalogue-entry-rtbst-16::
+
+Deletion, with data modification, right-looking:
+                                       *Note catalogue-entry-rtbst-15::
+
+Destruction:
+                                       *Note catalogue-entry-rtbst-11::
+
+Initialization of traverser to found item:
+                                        *Note catalogue-entry-rtbst-6::
+
+Initialization of traverser to greatest item:
+                                        *Note catalogue-entry-rtbst-5::
+
+Initialization of traverser to least item:
+                                        *Note catalogue-entry-rtbst-4::
+
+Insertion:
+                                        *Note catalogue-entry-rtbst-1::
+
+Rotation, left:
+                                       *Note catalogue-entry-rtbst-18::
+
+Rotation, right:
+                                       *Note catalogue-entry-rtbst-17::
+
+Search:
+                                        *Note catalogue-entry-rtbst-0::
+
+Vine compression:
+                                       *Note catalogue-entry-rtbst-14::
+
+Vine from tree:
+                                       *Note catalogue-entry-rtbst-13::
+
+Right-Threaded AVL Tree Algorithms
+==================================
+
+Copying:
+                                        *Note catalogue-entry-rtavl-2::
+
+Copying a node:
+                                        *Note catalogue-entry-rtavl-3::
+
+Deletion (left-looking):
+                                        *Note catalogue-entry-rtavl-1::
+
+Deletion, right-looking:
+                                        *Note catalogue-entry-rtavl-4::
+
+Deletion, with data modification:
+                                        *Note catalogue-entry-rtavl-5::
+
+Insertion:
+                                        *Note catalogue-entry-rtavl-0::
+
+Right-Threaded Red-Black Tree Algorithms
+========================================
+
+Deletion:
+                                         *Note catalogue-entry-rtrb-1::
+
+Insertion:
+                                         *Note catalogue-entry-rtrb-0::
+
+Binary Search Tree with Parent Pointers Algorithms
+==================================================
+
+Advancing a traverser:
+                                         *Note catalogue-entry-pbst-6::
+
+Backing up a traverser:
+                                         *Note catalogue-entry-pbst-7::
+
+Balancing (with later parent updates):
+                                         *Note catalogue-entry-pbst-9::
+
+Balancing, with integrated parent updates:
+                                        *Note catalogue-entry-pbst-12::
+
+Copying:
+                                         *Note catalogue-entry-pbst-8::
+
+Deletion:
+                                         *Note catalogue-entry-pbst-1::
+
+Initialization of traverser to found item:
+                                         *Note catalogue-entry-pbst-4::
+
+Initialization of traverser to greatest item:
+                                         *Note catalogue-entry-pbst-3::
+
+Initialization of traverser to inserted item:
+                                         *Note catalogue-entry-pbst-5::
+
+Initialization of traverser to least item:
+                                         *Note catalogue-entry-pbst-2::
+
+Insertion:
+                                         *Note catalogue-entry-pbst-0::
+
+Rotation, left:
+                                        *Note catalogue-entry-pbst-16::
+
+Rotation, right:
+                                        *Note catalogue-entry-pbst-15::
+
+Update parent pointers:
+                                        *Note catalogue-entry-pbst-11::
+
+Vine compression (with parent updates):
+                                        *Note catalogue-entry-pbst-14::
+
+Vine to balanced tree (without parent updates):
+                                        *Note catalogue-entry-pbst-10::
+
+Vine to balanced tree, with parent updates:
+                                        *Note catalogue-entry-pbst-13::
+
+AVL Tree with Parent Pointers Algorithms
+========================================
+
+Copying:
+                                         *Note catalogue-entry-pavl-2::
+
+Deletion:
+                                         *Note catalogue-entry-pavl-1::
+
+Insertion:
+                                         *Note catalogue-entry-pavl-0::
+
+Red-Black Tree with Parent Pointers Algorithms
+==============================================
+
+Deletion:
+                                          *Note catalogue-entry-prb-1::
+
+Insertion:
+                                          *Note catalogue-entry-prb-0::
+
+
+File: libavl.info,  Node: Index,  Prev: Catalogue of Algorithms,  Up: Top
+
+Appendix G Index
+****************
+
+ [index ]
+* Menu:
+
+* aborting allocator:                    Answers for Chapter 2.
+                                                             (line  190)
+* array of search functions:             Answers for Chapter 3.
+                                                             (line  195)
+* AVL copy function:                     Copying an AVL Tree.
+                                                             (line   10)
+* AVL functions:                         AVL Operations.     (line   14)
+* AVL item deletion function:            Deleting from an AVL Tree.
+                                                             (line   29)
+* AVL item insertion function:           Inserting into an AVL Tree.
+                                                             (line   59)
+* AVL maximum height:                    Analysis of AVL Balancing Rule.
+                                                             (line   30)
+* AVL node structure:                    AVL Data Types.     (line   10)
+* AVL traversal functions:               Traversal of an AVL Tree.
+                                                             (line   10)
+* AVL traverser advance function:        Traversal of an AVL Tree.
+                                                             (line  144)
+* AVL traverser back up function:        Traversal of an AVL Tree.
+                                                             (line  196)
+* AVL traverser greatest-item initializer: Traversal of an AVL Tree.
+                                                             (line   84)
+* AVL traverser insertion initializer:   Traversal of an AVL Tree.
+                                                             (line   29)
+* AVL traverser least-item initializer:  Traversal of an AVL Tree.
+                                                             (line   58)
+* AVL traverser search initializer:      Traversal of an AVL Tree.
+                                                             (line  110)
+* AVL tree verify function:              Testing AVL Trees.  (line  128)
+* avl-test.c:                            Testing AVL Trees.  (line   14)
+* avl.c:                                 AVL Trees.          (line   81)
+* avl.h:                                 AVL Trees.          (line   65)
+* avl_copy function:                     Copying an AVL Tree.
+                                                             (line   17)
+* avl_delete function:                   Deleting from an AVL Tree.
+                                                             (line   33)
+* AVL_H macro:                           AVL Trees.          (line   68)
+* AVL_MAX_HEIGHT macro:                  Analysis of AVL Balancing Rule.
+                                                             (line   33)
+* avl_node structure:                    AVL Data Types.     (line   14)
+* avl_probe function:                    Inserting into an AVL Tree.
+                                                             (line   63)
+* avl_probe() local variables:           Inserting into an AVL Tree.
+                                                             (line   74)
+* avl_t_find function:                   Traversal of an AVL Tree.
+                                                             (line  114)
+* avl_t_first function:                  Traversal of an AVL Tree.
+                                                             (line   62)
+* avl_t_insert function:                 Traversal of an AVL Tree.
+                                                             (line   33)
+* avl_t_last function:                   Traversal of an AVL Tree.
+                                                             (line   88)
+* avl_t_next function:                   Traversal of an AVL Tree.
+                                                             (line  148)
+* avl_t_prev function:                   Traversal of an AVL Tree.
+                                                             (line  200)
+* bin-ary-test.c:                        Answers for Chapter 3.
+                                                             (line  581)
+* bin_cmp function:                      Answers for Chapter 2.
+                                                             (line  130)
+* binary search of ordered array:        Binary Search of Ordered Array.
+                                                             (line   75)
+* binary search tree entry:              Binary Search Tree in Array.
+                                                             (line   35)
+* binary search using bsearch():         Answers for Chapter 3.
+                                                             (line   99)
+* binary_tree_entry structure:           Binary Search Tree in Array.
+                                                             (line   39)
+* block structure:                       Memory Manager.     (line   48)
+* blp's implementation of bsearch():     Answers for Chapter 3.
+                                                             (line  135)
+* blp_bsearch function:                  Answers for Chapter 3.
+                                                             (line  141)
+* BST balance function:                  Balancing a BST.    (line   60)
+* BST compression function:              Implementing Compression.
+                                                             (line   10)
+* BST copy error helper function:        Handling Errors in Iterative BST Copying.
+                                                             (line   41)
+* BST copy function:                     Handling Errors in Iterative BST Copying.
+                                                             (line   66)
+* BST creation function:                 Creating a BST.     (line    9)
+* BST destruction function:              Destroying a BST by Rotation.
+                                                             (line   58)
+* BST extra function prototypes:         Balancing a BST.    (line   75)
+* BST item deletion function:            Deleting from a BST.
+                                                             (line  115)
+* BST item deletion function, by merging: Deletion by Merging.
+                                                             (line   72)
+* BST item insertion function:           Inserting into a BST.
+                                                             (line   42)
+* BST item insertion function, alternate version: Answers for Chapter 4.
+                                                             (line  122)
+* BST item insertion function, root insertion version: Root Insertion in a BST.
+                                                             (line   55)
+* BST join function, iterative version:  Answers for Chapter 4.
+                                                             (line  915)
+* BST join function, recursive version:  Joining BSTs.       (line  139)
+* BST maximum height:                    BST Maximum Height. (line   21)
+* BST node structure:                    BST Node Structure. (line   12)
+* BST operations:                        BST Operations.     (line   14)
+* BST overflow test function:            Testing Overflow.   (line   17)
+* BST print function:                    Displaying BST Structures.
+                                                             (line   17)
+* BST search function:                   Searching a BST.    (line   10)
+* BST table structure:                   BST Structure.      (line    9)
+* BST test function:                     Testing BSTs.       (line   22)
+* BST to vine function:                  Transforming a BST into a Vine.
+                                                             (line   60)
+* BST traversal functions:               Better Iterative Traversal.
+                                                             (line  108)
+* BST traverser advance function:        BST Traverser Advancing.
+                                                             (line   14)
+* BST traverser back up function:        BST Traverser Retreating.
+                                                             (line   10)
+* BST traverser check function:          Testing BSTs.       (line  164)
+* BST traverser copy initializer:        BST Traverser Copying.
+                                                             (line    9)
+* BST traverser current item function:   BST Traversal Current Item.
+                                                             (line    6)
+* BST traverser greatest-item initializer: BST Traverser Last Initialization.
+                                                             (line   10)
+* BST traverser insertion initializer:   BST Traverser Insert Initialization.
+                                                             (line   10)
+* BST traverser least-item initializer:  BST Traverser First Initialization.
+                                                             (line   11)
+* BST traverser null initializer:        BST Traverser Null Initialization.
+                                                             (line    9)
+* BST traverser refresher:               Better Iterative Traversal.
+                                                             (line   71)
+* BST traverser refresher, with caching: Answers for Chapter 4.
+                                                             (line  653)
+* BST traverser replacement function:    BST Traversal Replacing the Current Item.
+                                                             (line    6)
+* BST traverser search initializer:      BST Traverser Find Initialization.
+                                                             (line   10)
+* BST traverser structure:               Better Iterative Traversal.
+                                                             (line   40)
+* BST verify function:                   BST Verification.   (line   11)
+* bst-test.c:                            Testing BST Functions.
+                                                             (line  112)
+* bst.c:                                 Binary Search Trees.
+                                                             (line   36)
+* bst.h:                                 Binary Search Trees.
+                                                             (line   17)
+* bst_balance function:                  Balancing a BST.    (line   67)
+* bst_copy function:                     Handling Errors in Iterative BST Copying.
+                                                             (line   73)
+* bst_copy_iterative function <1>:       Answers for Chapter 4.
+                                                             (line  845)
+* bst_copy_iterative function:           Copying a BST Iteratively.
+                                                             (line   16)
+* bst_copy_recursive_1 function:         Copying a BST Recursively.
+                                                             (line   15)
+* bst_create function:                   Creating a BST.     (line   14)
+* bst_deallocate_recursive function:     Answers for Chapter 4.
+                                                             (line  750)
+* bst_delete function <1>:               Deletion by Merging.
+                                                             (line   76)
+* bst_delete function:                   Deleting from a BST.
+                                                             (line  119)
+* bst_destroy function <1>:              Destroying a BST Iteratively.
+                                                             (line   72)
+* bst_destroy function:                  Destroying a BST by Rotation.
+                                                             (line   62)
+* bst_destroy_recursive function:        Destroying a BST Recursively.
+                                                             (line   18)
+* bst_find function <1>:                 Answers for Chapter 2.
+                                                             (line  152)
+* bst_find function:                     Searching a BST.    (line   14)
+* BST_H macro:                           Binary Search Trees.
+                                                             (line   20)
+* BST_MAX_HEIGHT macro:                  BST Maximum Height. (line   24)
+* bst_node structure:                    BST Node Structure. (line   16)
+* bst_probe function <1>:                Answers for Chapter 4.
+                                                             (line  126)
+* bst_probe function <2>:                Root Insertion in a BST.
+                                                             (line   59)
+* bst_probe function:                    Inserting into a BST.
+                                                             (line   46)
+* bst_robust_copy_recursive_1 function:  Answers for Chapter 4.
+                                                             (line  722)
+* bst_robust_copy_recursive_2 function:  Answers for Chapter 4.
+                                                             (line  768)
+* bst_t_copy function:                   BST Traverser Copying.
+                                                             (line   13)
+* bst_t_cur function:                    BST Traversal Current Item.
+                                                             (line   10)
+* bst_t_find function:                   BST Traverser Find Initialization.
+                                                             (line   14)
+* bst_t_first function:                  BST Traverser First Initialization.
+                                                             (line   15)
+* bst_t_init function:                   BST Traverser Null Initialization.
+                                                             (line   13)
+* bst_t_insert function:                 BST Traverser Insert Initialization.
+                                                             (line   14)
+* bst_t_last function:                   BST Traverser Last Initialization.
+                                                             (line   14)
+* bst_t_next function:                   BST Traverser Advancing.
+                                                             (line   18)
+* bst_t_prev function:                   BST Traverser Retreating.
+                                                             (line   14)
+* bst_t_replace function:                BST Traversal Replacing the Current Item.
+                                                             (line   10)
+* bst_table structure:                   BST Structure.      (line   13)
+* bst_traverse_level_order function:     Answers for Chapter 4.
+                                                             (line  167)
+* bst_traverser structure:               Better Iterative Traversal.
+                                                             (line   44)
+* BSTS functions:                        Answers for Chapter 4.
+                                                             (line 1394)
+* BSTS structures:                       Answers for Chapter 4.
+                                                             (line 1375)
+* BSTS test:                             Answers for Chapter 4.
+                                                             (line 1451)
+* bsts.c:                                Answers for Chapter 4.
+                                                             (line 1493)
+* bsts_find function:                    Answers for Chapter 4.
+                                                             (line 1399)
+* bsts_insert function:                  Answers for Chapter 4.
+                                                             (line 1422)
+* bsts_node structure:                   Answers for Chapter 4.
+                                                             (line 1379)
+* bsts_tree structure:                   Answers for Chapter 4.
+                                                             (line 1386)
+* calculate leaves:                      Balancing Implementation.
+                                                             (line   59)
+* case 1 in AVL deletion:                Deleting an AVL Node Step 2 - Delete.
+                                                             (line   47)
+* case 1 in BST deletion:                Deleting from a BST.
+                                                             (line  172)
+* case 1 in left-looking RTBST deletion: Left-Looking Deletion in an RTBST.
+                                                             (line   78)
+* case 1 in left-side initial-black RB insertion rebalancing: Initial Black Insertion in an RB Tree.
+                                                             (line  114)
+* case 1 in left-side PRB deletion rebalancing: Deleting a PRB Node Step 3 - Rebalance.
+                                                             (line  135)
+* case 1 in left-side PRB insertion rebalancing: Step 3 in PRB Insertion.
+                                                             (line  108)
+* case 1 in left-side RB deletion rebalancing: Deleting an RB Node Step 3 - Rebalance.
+                                                             (line  180)
+* case 1 in left-side RB insertion rebalancing: Inserting an RB Node Step 3 - Rebalance.
+                                                             (line  115)
+* case 1 in left-side RTRB insertion rebalancing: Step 3 in RTRB Insertion.
+                                                             (line   86)
+* case 1 in left-side TRB deletion rebalancing: Deleting a TRB Node Step 3 - Rebalance.
+                                                             (line   87)
+* case 1 in left-side TRB insertion rebalancing: Step 3 in TRB Insertion.
+                                                             (line   63)
+* case 1 in PAVL deletion:               Deleting a PAVL Node Step 2 - Delete.
+                                                             (line   39)
+* case 1 in PBST deletion:               Deleting from a PBST.
+                                                             (line   90)
+* case 1 in PRB deletion:                Deleting a PRB Node Step 2 - Delete.
+                                                             (line   40)
+* case 1 in RB deletion:                 Deleting an RB Node Step 2 - Delete.
+                                                             (line  122)
+* case 1 in right-looking RTBST deletion: Right-Looking Deletion in a RTBST.
+                                                             (line   48)
+* case 1 in right-side initial-black RB insertion rebalancing: Initial Black Insertion in an RB Tree.
+                                                             (line  206)
+* case 1 in right-side PRB deletion rebalancing: PRB Deletion Symmetric Case.
+                                                             (line   51)
+* case 1 in right-side PRB insertion rebalancing: PRB Insertion Symmetric Case.
+                                                             (line   30)
+* case 1 in right-side RB deletion rebalancing: RB Deletion Symmetric Case.
+                                                             (line   48)
+* case 1 in right-side RB insertion rebalancing: RB Insertion Symmetric Case.
+                                                             (line   28)
+* case 1 in right-side RTRB insertion rebalancing: Step 3 in RTRB Insertion.
+                                                             (line   90)
+* case 1 in right-side TRB deletion rebalancing: TRB Deletion Symmetric Case.
+                                                             (line   38)
+* case 1 in right-side TRB insertion rebalancing: TRB Insertion Symmetric Case.
+                                                             (line   28)
+* case 1 in RTAVL deletion:              Deleting a RTAVL Node Step 2 - Delete.
+                                                             (line   45)
+* case 1 in RTAVL deletion, right-looking: Answers for Chapter 11.
+                                                             (line   82)
+* case 1 in RTRB deletion:               Deleting an RTRB Node Step 2 - Delete.
+                                                             (line   46)
+* case 1 in TAVL deletion:               Deleting a TAVL Node Step 2 - Delete.
+                                                             (line   50)
+* case 1 in TAVL deletion, with stack:   Answers for Chapter 8.
+                                                             (line  212)
+* case 1 in TBST deletion:               Deleting from a TBST.
+                                                             (line  133)
+* case 1 in TRB deletion:                Deleting a TRB Node Step 2 - Delete.
+                                                             (line   49)
+* case 1.5 in BST deletion:              Answers for Chapter 4.
+                                                             (line  379)
+* case 2 in AVL deletion:                Deleting an AVL Node Step 2 - Delete.
+                                                             (line   60)
+* case 2 in BST deletion:                Deleting from a BST.
+                                                             (line  179)
+* case 2 in left-looking RTBST deletion: Left-Looking Deletion in an RTBST.
+                                                             (line   88)
+* case 2 in left-side initial-black RB insertion rebalancing: Initial Black Insertion in an RB Tree.
+                                                             (line  142)
+* case 2 in left-side PRB deletion rebalancing: Deleting a PRB Node Step 3 - Rebalance.
+                                                             (line  145)
+* case 2 in left-side PRB insertion rebalancing: Step 3 in PRB Insertion.
+                                                             (line  137)
+* case 2 in left-side RB deletion rebalancing: Deleting an RB Node Step 3 - Rebalance.
+                                                             (line  210)
+* case 2 in left-side RB insertion rebalancing: Inserting an RB Node Step 3 - Rebalance.
+                                                             (line  149)
+* case 2 in left-side RTRB deletion rebalancing: Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line  128)
+* case 2 in left-side RTRB insertion rebalancing: Step 3 in RTRB Insertion.
+                                                             (line  121)
+* case 2 in left-side TRB deletion rebalancing: Deleting a TRB Node Step 3 - Rebalance.
+                                                             (line  112)
+* case 2 in left-side TRB insertion rebalancing: Step 3 in TRB Insertion.
+                                                             (line  107)
+* case 2 in PAVL deletion:               Deleting a PAVL Node Step 2 - Delete.
+                                                             (line   48)
+* case 2 in PBST deletion:               Deleting from a PBST.
+                                                             (line  115)
+* case 2 in PRB deletion:                Deleting a PRB Node Step 2 - Delete.
+                                                             (line   54)
+* case 2 in RB deletion:                 Deleting an RB Node Step 2 - Delete.
+                                                             (line  147)
+* case 2 in right-looking RTBST deletion: Right-Looking Deletion in a RTBST.
+                                                             (line   75)
+* case 2 in right-side initial-black RB insertion rebalancing: Initial Black Insertion in an RB Tree.
+                                                             (line  210)
+* case 2 in right-side PRB deletion rebalancing: PRB Deletion Symmetric Case.
+                                                             (line   55)
+* case 2 in right-side PRB insertion rebalancing: PRB Insertion Symmetric Case.
+                                                             (line   36)
+* case 2 in right-side RB deletion rebalancing: RB Deletion Symmetric Case.
+                                                             (line   61)
+* case 2 in right-side RB insertion rebalancing: RB Insertion Symmetric Case.
+                                                             (line   32)
+* case 2 in right-side RTRB deletion rebalancing: Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line  156)
+* case 2 in right-side RTRB insertion rebalancing: Step 3 in RTRB Insertion.
+                                                             (line  148)
+* case 2 in right-side TRB deletion rebalancing: TRB Deletion Symmetric Case.
+                                                             (line   42)
+* case 2 in right-side TRB insertion rebalancing: TRB Insertion Symmetric Case.
+                                                             (line   32)
+* case 2 in RTAVL deletion:              Deleting a RTAVL Node Step 2 - Delete.
+                                                             (line   57)
+* case 2 in RTAVL deletion, right-looking: Answers for Chapter 11.
+                                                             (line   90)
+* case 2 in RTRB deletion:               Deleting an RTRB Node Step 2 - Delete.
+                                                             (line   56)
+* case 2 in TAVL deletion:               Deleting a TAVL Node Step 2 - Delete.
+                                                             (line   61)
+* case 2 in TAVL deletion, with stack:   Answers for Chapter 8.
+                                                             (line  220)
+* case 2 in TBST deletion:               Deleting from a TBST.
+                                                             (line  162)
+* case 2 in TRB deletion:                Deleting a TRB Node Step 2 - Delete.
+                                                             (line   64)
+* case 3 in AVL deletion:                Deleting an AVL Node Step 2 - Delete.
+                                                             (line   79)
+* case 3 in AVL deletion, alternate version: Answers for Chapter 5.
+                                                             (line  196)
+* case 3 in BST deletion:                Deleting from a BST.
+                                                             (line  189)
+* case 3 in BST deletion, alternate version: Answers for Chapter 4.
+                                                             (line  385)
+* case 3 in left-looking RTBST deletion: Left-Looking Deletion in an RTBST.
+                                                             (line  114)
+* case 3 in left-side initial-black RB insertion rebalancing: Initial Black Insertion in an RB Tree.
+                                                             (line  174)
+* case 3 in left-side PRB insertion rebalancing: Step 3 in PRB Insertion.
+                                                             (line  176)
+* case 3 in left-side RB insertion rebalancing: Inserting an RB Node Step 3 - Rebalance.
+                                                             (line  188)
+* case 3 in left-side RTRB insertion rebalancing: Step 3 in RTRB Insertion.
+                                                             (line  183)
+* case 3 in left-side TRB insertion rebalancing: Step 3 in TRB Insertion.
+                                                             (line  139)
+* case 3 in PAVL deletion:               Deleting a PAVL Node Step 2 - Delete.
+                                                             (line   60)
+* case 3 in PBST deletion:               Deleting from a PBST.
+                                                             (line  132)
+* case 3 in PRB deletion:                Deleting a PRB Node Step 2 - Delete.
+                                                             (line   73)
+* case 3 in RB deletion:                 Deleting an RB Node Step 2 - Delete.
+                                                             (line  184)
+* case 3 in right-looking RTBST deletion: Right-Looking Deletion in a RTBST.
+                                                             (line   90)
+* case 3 in right-side initial-black RB insertion rebalancing: Initial Black Insertion in an RB Tree.
+                                                             (line  221)
+* case 3 in right-side PRB insertion rebalancing: PRB Insertion Symmetric Case.
+                                                             (line   50)
+* case 3 in right-side RB insertion rebalancing: RB Insertion Symmetric Case.
+                                                             (line   42)
+* case 3 in right-side RTRB insertion rebalancing: Step 3 in RTRB Insertion.
+                                                             (line  209)
+* case 3 in right-side TRB insertion rebalancing: TRB Insertion Symmetric Case.
+                                                             (line   43)
+* case 3 in RTAVL deletion:              Deleting a RTAVL Node Step 2 - Delete.
+                                                             (line   70)
+* case 3 in RTAVL deletion, right-looking: Answers for Chapter 11.
+                                                             (line   96)
+* case 3 in RTRB deletion:               Deleting an RTRB Node Step 2 - Delete.
+                                                             (line   67)
+* case 3 in TAVL deletion:               Deleting a TAVL Node Step 2 - Delete.
+                                                             (line   73)
+* case 3 in TAVL deletion, with stack:   Answers for Chapter 8.
+                                                             (line  226)
+* case 3 in TBST deletion:               Deleting from a TBST.
+                                                             (line  191)
+* case 3 in TRB deletion:                Deleting a TRB Node Step 2 - Delete.
+                                                             (line   78)
+* case 4 in left-looking RTBST deletion: Left-Looking Deletion in an RTBST.
+                                                             (line  128)
+* case 4 in left-looking RTBST deletion, alternate version: Answers for Chapter 10.
+                                                             (line   40)
+* case 4 in right-looking RTBST deletion: Right-Looking Deletion in a RTBST.
+                                                             (line  110)
+* case 4 in right-looking RTBST deletion, alternate version: Answers for Chapter 10.
+                                                             (line   16)
+* case 4 in RTAVL deletion:              Deleting a RTAVL Node Step 2 - Delete.
+                                                             (line   85)
+* case 4 in RTAVL deletion, alternate version: Answers for Chapter 11.
+                                                             (line  150)
+* case 4 in RTAVL deletion, right-looking: Answers for Chapter 11.
+                                                             (line  111)
+* case 4 in RTRB deletion:               Deleting an RTRB Node Step 2 - Delete.
+                                                             (line   86)
+* case 4 in TAVL deletion:               Deleting a TAVL Node Step 2 - Delete.
+                                                             (line   88)
+* case 4 in TAVL deletion, alternate version: Answers for Chapter 8.
+                                                             (line   90)
+* case 4 in TAVL deletion, with stack:   Answers for Chapter 8.
+                                                             (line  242)
+* case 4 in TBST deletion:               Deleting from a TBST.
+                                                             (line  253)
+* case 4 in TBST deletion, alternate version: Answers for Chapter 7.
+                                                             (line   85)
+* case 4 in TRB deletion:                Deleting a TRB Node Step 2 - Delete.
+                                                             (line  104)
+* case 4 in TRB deletion, alternate version: Answers for Chapter 9.
+                                                             (line  151)
+* cheat_search function:                 Answers for Chapter 3.
+                                                             (line  241)
+* cheating search:                       Answers for Chapter 3.
+                                                             (line  232)
+* check AVL tree structure:              Testing AVL Trees.  (line  166)
+* check BST structure:                   BST Verification.   (line   72)
+* check counted nodes:                   BST Verification.   (line   80)
+* check for tree height in range:        Balancing Implementation.
+                                                             (line  112)
+* check RB tree structure:               Testing RB Trees.   (line  203)
+* check root is black:                   Testing RB Trees.   (line  195)
+* check that backward traversal works:   BST Verification.   (line  199)
+* check that forward traversal works:    BST Verification.   (line  168)
+* check that the tree contains all the elements it should: BST Verification.
+                                                             (line  144)
+* check that traversal from the null element works: BST Verification.
+                                                             (line  234)
+* check tree->bst_count is correct:      BST Verification.   (line   55)
+* check_traverser function:              Testing BSTs.       (line  173)
+* clean up after search tests:           Answers for Chapter 3.
+                                                             (line  453)
+* command line parser:                   Command-Line Parser.
+                                                             (line   12)
+* compare two AVL trees for structure and content: Testing AVL Trees.
+                                                             (line   30)
+* compare two BSTs for structure and content: Testing BSTs.  (line  259)
+* compare two PAVL trees for structure and content: Testing PAVL Trees.
+                                                             (line   24)
+* compare two PBSTs for structure and content: Testing PBSTs.
+                                                             (line   22)
+* compare two PRB trees for structure and content: Testing PRB Trees.
+                                                             (line   24)
+* compare two RB trees for structure and content: Testing RB Trees.
+                                                             (line   26)
+* compare two RTAVL trees for structure and content: Testing RTAVL Trees.
+                                                             (line   22)
+* compare two RTBSTs for structure and content: Testing RTBSTs.
+                                                             (line   73)
+* compare two RTRB trees for structure and content: Testing RTRB Trees.
+                                                             (line   22)
+* compare two TAVL trees for structure and content: Testing TAVL Trees.
+                                                             (line   24)
+* compare two TBSTs for structure and content: Testing TBSTs.
+                                                             (line   87)
+* compare two TRB trees for structure and content: Testing TRB Trees.
+                                                             (line   24)
+* compare_fixed_strings function:        Answers for Chapter 2.
+                                                             (line   89)
+* compare_ints function <1>:             Answers for Chapter 3.
+                                                             (line  107)
+* compare_ints function <2>:             Answers for Chapter 2.
+                                                             (line   65)
+* compare_ints function:                 Comparison Function.
+                                                             (line   90)
+* compare_trees function <1>:            Testing PRB Trees.  (line   28)
+* compare_trees function <2>:            Testing PAVL Trees. (line   30)
+* compare_trees function <3>:            Testing PBSTs.      (line   26)
+* compare_trees function <4>:            Testing RTRB Trees. (line   26)
+* compare_trees function <5>:            Testing RTAVL Trees.
+                                                             (line   26)
+* compare_trees function <6>:            Testing RTBSTs.     (line   77)
+* compare_trees function <7>:            Testing TRB Trees.  (line   28)
+* compare_trees function <8>:            Testing TAVL Trees. (line   28)
+* compare_trees function <9>:            Testing TBSTs.      (line   91)
+* compare_trees function <10>:           Testing RB Trees.   (line   30)
+* compare_trees function:                Testing AVL Trees.  (line   34)
+* comparison function for ints:          Comparison Function.
+                                                             (line   44)
+* compress function <1>:                 Answers for Chapter 13.
+                                                             (line   57)
+* compress function:                     Transforming a Vine into a Balanced TBST.
+                                                             (line   92)
+* copy_error_recovery function <1>:      Copying a PBST.     (line  124)
+* copy_error_recovery function <2>:      Copying an RTBST.   (line  130)
+* copy_error_recovery function <3>:      Copying a TBST.     (line  219)
+* copy_error_recovery function:          Handling Errors in Iterative BST Copying.
+                                                             (line   46)
+* copy_node function <1>:                Copying an RTAVL Tree.
+                                                             (line   22)
+* copy_node function <2>:                Copying an RTBST.   (line   92)
+* copy_node function <3>:                Copying a TAVL Tree.
+                                                             (line   16)
+* copy_node function:                    Copying a TBST.     (line   75)
+* default memory allocation functions:   Memory Allocation.  (line   44)
+* default memory allocator header:       Memory Allocation.  (line   74)
+* delete BST node:                       Deleting from a BST.
+                                                             (line  154)
+* delete BST node by merging:            Deletion by Merging.
+                                                             (line  116)
+* delete item from AVL tree:             Deleting an AVL Node Step 2 - Delete.
+                                                             (line   14)
+* delete item from PAVL tree:            Deleting a PAVL Node Step 2 - Delete.
+                                                             (line   13)
+* delete item from PRB tree:             Deleting a PRB Node Step 2 - Delete.
+                                                             (line   12)
+* delete item from RB tree:              Deleting an RB Node Step 2 - Delete.
+                                                             (line   96)
+* delete item from RB tree, alternate version: Answers for Chapter 6.
+                                                             (line   88)
+* delete item from TAVL tree:            Deleting a TAVL Node Step 2 - Delete.
+                                                             (line   15)
+* delete item from TAVL tree, with stack: Answers for Chapter 8.
+                                                             (line  183)
+* delete item from TRB tree:             Deleting a TRB Node Step 2 - Delete.
+                                                             (line   12)
+* delete PBST node:                      Deleting from a PBST.
+                                                             (line   64)
+* delete RTAVL node:                     Deleting a RTAVL Node Step 2 - Delete.
+                                                             (line   11)
+* delete RTAVL node, right-looking:      Answers for Chapter 11.
+                                                             (line   55)
+* delete RTBST node, left-looking:       Left-Looking Deletion in an RTBST.
+                                                             (line   33)
+* delete RTBST node, right-looking:      Right-Looking Deletion in a RTBST.
+                                                             (line   11)
+* delete RTRB node:                      Deleting an RTRB Node Step 2 - Delete.
+                                                             (line   11)
+* delete TBST node:                      Deleting from a TBST.
+                                                             (line   68)
+* delete_order enumeration:              Test Set Generation.
+                                                             (line   29)
+* destroy a BST iteratively:             Destroying a BST Iteratively.
+                                                             (line   68)
+* destroy a BST recursively:             Destroying a BST Recursively.
+                                                             (line   14)
+* ensure w is black in left-side PRB deletion rebalancing: Deleting a PRB Node Step 3 - Rebalance.
+                                                             (line  112)
+* ensure w is black in left-side RB deletion rebalancing: Deleting an RB Node Step 3 - Rebalance.
+                                                             (line  131)
+* ensure w is black in left-side TRB deletion rebalancing: Deleting a TRB Node Step 3 - Rebalance.
+                                                             (line   77)
+* ensure w is black in right-side PRB deletion rebalancing: PRB Deletion Symmetric Case.
+                                                             (line   34)
+* ensure w is black in right-side RB deletion rebalancing: RB Deletion Symmetric Case.
+                                                             (line   32)
+* ensure w is black in right-side TRB deletion rebalancing: TRB Deletion Symmetric Case.
+                                                             (line   34)
+* error_node variable:                   Answers for Chapter 4.
+                                                             (line  761)
+* fail function:                         Utility Functions.  (line   32)
+* fallback_join function:                Answers for Chapter 4.
+                                                             (line  920)
+* find BST node to delete:               Deleting from a BST.
+                                                             (line  137)
+* find BST node to delete by merging:    Deletion by Merging.
+                                                             (line   92)
+* find parent of a TBST node:            Finding the Parent of a TBST Node.
+                                                             (line   53)
+* find PBST node to delete:              Deleting from a PBST.
+                                                             (line   30)
+* find predecessor of RTBST node with left child: RTBST Traverser Retreating.
+                                                             (line   96)
+* find predecessor of RTBST node with no left child: RTBST Traverser Retreating.
+                                                             (line   74)
+* find RTBST node to delete:             Deleting from an RTBST.
+                                                             (line   35)
+* find TBST node to delete:              Deleting from a TBST.
+                                                             (line   38)
+* find TBST node to delete, with parent node algorithm: Answers for Chapter 7.
+                                                             (line   30)
+* find_parent function:                  Finding the Parent of a TBST Node.
+                                                             (line   59)
+* finish up after BST deletion by merging: Deletion by Merging.
+                                                             (line  155)
+* finish up after deleting BST node:     Deleting from a BST.
+                                                             (line  213)
+* finish up after deleting PBST node:    Deleting from a PBST.
+                                                             (line  178)
+* finish up after deleting RTBST node:   Deleting from an RTBST.
+                                                             (line   71)
+* finish up after deleting TBST node:    Deleting from a TBST.
+                                                             (line  302)
+* finish up after PRB deletion:          Deleting a PRB Node Step 4 - Finish Up.
+                                                             (line    6)
+* finish up after RB deletion:           Deleting an RB Node Step 4 - Finish Up.
+                                                             (line    9)
+* finish up after RTRB deletion:         Deleting an RTRB Node Step 4 - Finish Up.
+                                                             (line    6)
+* finish up after TRB deletion:          Deleting a TRB Node Step 4 - Finish Up.
+                                                             (line    9)
+* finish up and return after AVL deletion: Deleting an AVL Node Step 5 - Finish Up.
+                                                             (line    6)
+* first_item function:                   Improving Convenience.
+                                                             (line   85)
+* found insertion point in recursive AVL insertion: Recursive Insertion.
+                                                             (line   80)
+* gen_balanced_tree function:            Answers for Chapter 4.
+                                                             (line 1098)
+* gen_deletions function:                Answers for Chapter 4.
+                                                             (line 1176)
+* gen_insertions function:               Answers for Chapter 4.
+                                                             (line 1120)
+* generate permutation for balanced tree: Answers for Chapter 4.
+                                                             (line 1090)
+* generate random permutation of integers: Answers for Chapter 4.
+                                                             (line 1064)
+* handle case where x has a right child: BST Traverser Advancing.
+                                                             (line   53)
+* handle case where x has no right child: BST Traverser Advancing.
+                                                             (line   81)
+* handle stack overflow during BST traversal: Answers for Chapter 4.
+                                                             (line  554)
+* handle_long_option function:           Option Parser.      (line   89)
+* handle_short_option function:          Option Parser.      (line   56)
+* initialize search test array:          Answers for Chapter 3.
+                                                             (line  430)
+* initialize smaller and larger within binary search tree: Answers for Chapter 3.
+                                                             (line  559)
+* insert AVL node:                       Step 2 in AVL Insertion.
+                                                             (line   12)
+* insert n into arbitrary subtree:       Answers for Chapter 4.
+                                                             (line  239)
+* insert new BST node, root insertion version: Root Insertion in a BST.
+                                                             (line   89)
+* insert new node into RTBST tree:       Inserting into an RTBST.
+                                                             (line   92)
+* insert PAVL node:                      Steps 1 and 2 in PAVL Insertion.
+                                                             (line   32)
+* insert PBST node:                      Inserting into a PBST.
+                                                             (line   36)
+* insert PRB node:                       Step 2 in PRB Insertion.
+                                                             (line    9)
+* insert RB node:                        Inserting an RB Node Step 2 - Insert.
+                                                             (line    6)
+* insert RTAVL node:                     Steps 1-1 in RTAVL Insertion.
+                                                             (line   44)
+* insert RTRB node:                      Steps 1 and 2 in RTRB Insertion.
+                                                             (line   45)
+* insert TAVL node:                      Steps 1 and 2 in TAVL Insertion.
+                                                             (line   44)
+* insert TBST node:                      Inserting into a TBST.
+                                                             (line   76)
+* insert TRB node:                       Steps 1 and 2 in TRB Insertion.
+                                                             (line   37)
+* insert_order enumeration:              Test Set Generation.
+                                                             (line   15)
+* insertion and deletion order generation: Answers for Chapter 4.
+                                                             (line 1110)
+* intermediate step between bst_copy_recursive_2() and bst_copy_iterative(): Answers for Chapter 4.
+                                                             (line  840)
+* iter variable:                         Answers for Chapter 4.
+                                                             (line  555)
+* iterative copy of BST:                 Copying a BST Iteratively.
+                                                             (line   11)
+* iterative traversal of BST, take 1:    Iterative Traversal of a BST.
+                                                             (line   51)
+* iterative traversal of BST, take 2:    Iterative Traversal of a BST.
+                                                             (line   68)
+* iterative traversal of BST, take 3:    Iterative Traversal of a BST.
+                                                             (line   86)
+* iterative traversal of BST, take 4:    Iterative Traversal of a BST.
+                                                             (line  124)
+* iterative traversal of BST, take 5:    Iterative Traversal of a BST.
+                                                             (line  157)
+* iterative traversal of BST, take 6:    Improving Convenience.
+                                                             (line   62)
+* iterative traversal of BST, with dynamically allocated stack: Answers for Chapter 4.
+                                                             (line  479)
+* left-side rebalancing after initial-black RB insertion: Initial Black Insertion in an RB Tree.
+                                                             (line   70)
+* left-side rebalancing after PRB deletion: Deleting a PRB Node Step 3 - Rebalance.
+                                                             (line   61)
+* left-side rebalancing after PRB insertion: Step 3 in PRB Insertion.
+                                                             (line   62)
+* left-side rebalancing after RB deletion: Deleting an RB Node Step 3 - Rebalance.
+                                                             (line   75)
+* left-side rebalancing after RB insertion: Inserting an RB Node Step 3 - Rebalance.
+                                                             (line   62)
+* left-side rebalancing after RTRB deletion: Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line   49)
+* left-side rebalancing after RTRB insertion: Step 3 in RTRB Insertion.
+                                                             (line   35)
+* left-side rebalancing after TRB deletion: Deleting a TRB Node Step 3 - Rebalance.
+                                                             (line   43)
+* left-side rebalancing after TRB insertion: Step 3 in TRB Insertion.
+                                                             (line   28)
+* left-side rebalancing case 1 in AVL deletion: Deleting an AVL Node Step 4 - Rebalance.
+                                                             (line   44)
+* left-side rebalancing case 1 in PAVL deletion: Deleting a PAVL Node Step 4 - Rebalance.
+                                                             (line   27)
+* left-side rebalancing case 2 in AVL deletion: Deleting an AVL Node Step 4 - Rebalance.
+                                                             (line   85)
+* left-side rebalancing case 2 in PAVL deletion: Deleting a PAVL Node Step 4 - Rebalance.
+                                                             (line   44)
+* level-order traversal:                 Answers for Chapter 4.
+                                                             (line  161)
+* LIBAVL_ALLOCATOR macro:                Memory Allocation.  (line   18)
+* libavl_allocator structure:            Memory Allocation.  (line   22)
+* library License:                       Licenses.           (line   14)
+* main function <1>:                     Answers for Chapter 3.
+                                                             (line   24)
+* main function:                         Main Program.       (line   54)
+* main program to test binary_search_tree_array(): Answers for Chapter 3.
+                                                             (line  595)
+* make special case TBST vine into balanced tree and count height: Transforming a Vine into a Balanced TBST.
+                                                             (line  129)
+* make special case vine into balanced tree and count height: Balancing Implementation.
+                                                             (line   95)
+* MAX_INPUT macro:                       Answers for Chapter 3.
+                                                             (line   17)
+* memory allocator:                      Memory Allocation.  (line   16)
+* memory tracker:                        Memory Manager.     (line   42)
+* move BST node to root:                 Root Insertion in a BST.
+                                                             (line  101)
+* move down then up in recursive AVL insertion: Recursive Insertion.
+                                                             (line  113)
+* mt_allocate function:                  Memory Manager.     (line  235)
+* mt_allocator function:                 Memory Manager.     (line  180)
+* mt_allocator structure:                Memory Manager.     (line   87)
+* mt_arg_index enumeration:              Memory Manager.     (line   78)
+* mt_create function:                    Memory Manager.     (line  116)
+* mt_free function:                      Memory Manager.     (line  300)
+* mt_policy enumeration:                 Memory Manager.     (line   19)
+* new_block function:                    Memory Manager.     (line  195)
+* option parser:                         Option Parser.      (line   12)
+* option structure:                      User Interaction.   (line   26)
+* option_get function:                   Option Parser.      (line  141)
+* option_init function:                  Option Parser.      (line   33)
+* option_state structure:                Option Parser.      (line   16)
+* overflow testers <1>:                  Answers for Chapter 4.
+                                                             (line 1242)
+* overflow testers:                      Testing Overflow.   (line  104)
+* parse search test command line:        Answers for Chapter 3.
+                                                             (line  398)
+* parse_command_line function:           Command-Line Parser.
+                                                             (line  100)
+* PAVL copy function:                    Copying a PAVL Tree.
+                                                             (line    9)
+* PAVL functions:                        PAVL Operations.    (line   10)
+* PAVL item deletion function:           Deleting from a PAVL Tree.
+                                                             (line   16)
+* PAVL item insertion function:          Inserting into a PAVL Tree.
+                                                             (line   16)
+* PAVL node structure:                   PAVL Data Types.    (line    9)
+* PAVL traversal functions:              Traversing a PAVL Tree.
+                                                             (line   11)
+* pavl-test.c:                           Testing PAVL Trees. (line    8)
+* pavl.c:                                AVL Trees with Parent Pointers.
+                                                             (line   31)
+* pavl.h:                                AVL Trees with Parent Pointers.
+                                                             (line   15)
+* pavl_copy function:                    Copying a PAVL Tree.
+                                                             (line   16)
+* pavl_delete function:                  Deleting from a PAVL Tree.
+                                                             (line   20)
+* PAVL_H macro:                          AVL Trees with Parent Pointers.
+                                                             (line   18)
+* pavl_node structure:                   PAVL Data Types.    (line   13)
+* pavl_probe function:                   Inserting into a PAVL Tree.
+                                                             (line   20)
+* PBST balance function:                 Balancing a PBST.   (line   14)
+* PBST balance function, with integrated parent updates: Answers for Chapter 13.
+                                                             (line   17)
+* PBST compression function:             Answers for Chapter 13.
+                                                             (line   53)
+* PBST copy error helper function:       Copying a PBST.     (line  119)
+* PBST copy function:                    Copying a PBST.     (line   14)
+* PBST extra function prototypes:        Balancing a PBST.   (line   46)
+* PBST functions:                        PBST Operations.    (line   15)
+* PBST item deletion function:           Deleting from a PBST.
+                                                             (line    9)
+* PBST item insertion function:          Inserting into a PBST.
+                                                             (line    9)
+* PBST node structure:                   PBST Data Types.    (line   11)
+* PBST traversal functions:              Traversing a PBST.  (line   11)
+* PBST traverser advance function:       PBST Traverser Advancing.
+                                                             (line   32)
+* PBST traverser back up function:       PBST Traverser Retreating.
+                                                             (line    9)
+* PBST traverser first initializer:      PBST Traverser First Initialization.
+                                                             (line    9)
+* PBST traverser insertion initializer:  PBST Traverser Insert Initialization.
+                                                             (line    9)
+* PBST traverser last initializer:       PBST Traverser Last Initialization.
+                                                             (line    9)
+* PBST traverser search initializer:     PBST Traverser Find Initialization.
+                                                             (line   11)
+* pbst-test.c:                           Testing PBSTs.      (line    6)
+* pbst.c:                                BSTs with Parent Pointers.
+                                                             (line   66)
+* pbst.h:                                BSTs with Parent Pointers.
+                                                             (line   50)
+* pbst_balance function <1>:             Answers for Chapter 13.
+                                                             (line   24)
+* pbst_balance function:                 Balancing a PBST.   (line   22)
+* pbst_copy function:                    Copying a PBST.     (line   21)
+* pbst_delete function:                  Deleting from a PBST.
+                                                             (line   13)
+* PBST_H macro:                          BSTs with Parent Pointers.
+                                                             (line   53)
+* pbst_node structure:                   PBST Data Types.    (line   15)
+* pbst_probe function:                   Inserting into a PBST.
+                                                             (line   13)
+* pbst_t_find function:                  PBST Traverser Find Initialization.
+                                                             (line   15)
+* pbst_t_first function:                 PBST Traverser First Initialization.
+                                                             (line   13)
+* pbst_t_insert function:                PBST Traverser Insert Initialization.
+                                                             (line   14)
+* pbst_t_last function:                  PBST Traverser Last Initialization.
+                                                             (line   13)
+* pbst_t_next function:                  PBST Traverser Advancing.
+                                                             (line   36)
+* pbst_t_prev function:                  PBST Traverser Retreating.
+                                                             (line   13)
+* permuted_integers function:            Answers for Chapter 4.
+                                                             (line 1071)
+* pgm_name variable:                     Main Program.       (line  171)
+* pool_allocator structure:              Answers for Chapter 2.
+                                                             (line  220)
+* pool_allocator_free function:          Answers for Chapter 2.
+                                                             (line  242)
+* pool_allocator_malloc function:        Answers for Chapter 2.
+                                                             (line  235)
+* pool_allocator_tbl_create function:    Answers for Chapter 2.
+                                                             (line  254)
+* PRB functions:                         PRB Operations.     (line   11)
+* PRB item deletion function:            Deleting from a PRB Tree.
+                                                             (line   11)
+* PRB item insertion function:           Inserting into a PRB Tree.
+                                                             (line   15)
+* PRB node structure:                    PRB Data Types.     (line   10)
+* prb-test.c:                            Testing PRB Trees.  (line    8)
+* prb.c:                                 Red-Black Trees with Parent Pointers.
+                                                             (line   27)
+* prb.h:                                 Red-Black Trees with Parent Pointers.
+                                                             (line   11)
+* prb_color enumeration:                 PRB Data Types.     (line   14)
+* prb_delete function:                   Deleting from a PRB Tree.
+                                                             (line   15)
+* PRB_H macro:                           Red-Black Trees with Parent Pointers.
+                                                             (line   14)
+* prb_node structure:                    PRB Data Types.     (line   21)
+* prb_probe function:                    Inserting into a PRB Tree.
+                                                             (line   19)
+* print_tree_structure function <1>:     Testing RTBSTs.     (line   28)
+* print_tree_structure function:         Testing TBSTs.      (line   39)
+* print_whole_tree function <1>:         Testing RTBSTs.     (line   67)
+* print_whole_tree function <2>:         Testing TBSTs.      (line   81)
+* print_whole_tree function:             Displaying BST Structures.
+                                                             (line   62)
+* probe function:                        Recursive Insertion.
+                                                             (line   49)
+* process_node function:                 Improving Convenience.
+                                                             (line   19)
+* program License:                       Licenses.           (line   43)
+* random number seeding:                 Answers for Chapter 4.
+                                                             (line 1217)
+* RB functions:                          Operations in an RB Tree.
+                                                             (line   13)
+* RB item deletion function:             Deleting from an RB Tree.
+                                                             (line   21)
+* RB item insertion function:            Inserting into an RB Tree.
+                                                             (line   21)
+* RB item insertion function, initial black: Initial Black Insertion in an RB Tree.
+                                                             (line   16)
+* RB maximum height:                     RB Data Types.      (line   31)
+* RB node structure:                     RB Data Types.      (line   11)
+* RB tree verify function:               Testing RB Trees.   (line  152)
+* rb-test.c:                             Testing RB Trees.   (line   10)
+* rb.c:                                  Red-Black Trees.    (line   41)
+* rb.h:                                  Red-Black Trees.    (line   25)
+* rb_color enumeration:                  RB Data Types.      (line   15)
+* rb_delete function:                    Deleting from an RB Tree.
+                                                             (line   25)
+* RB_H macro:                            Red-Black Trees.    (line   28)
+* RB_MAX_HEIGHT macro:                   RB Data Types.      (line   34)
+* rb_node structure:                     RB Data Types.      (line   22)
+* rb_probe function <1>:                 Initial Black Insertion in an RB Tree.
+                                                             (line   20)
+* rb_probe function:                     Inserting into an RB Tree.
+                                                             (line   25)
+* rb_probe() local variables:            Inserting into an RB Tree.
+                                                             (line   35)
+* rebalance + balance in TAVL insertion in left subtree, alternate version: Answers for Chapter 8.
+                                                             (line   71)
+* rebalance after AVL deletion:          Deleting an AVL Node Step 4 - Rebalance.
+                                                             (line   11)
+* rebalance after AVL insertion:         Rebalancing AVL Trees.
+                                                             (line   24)
+* rebalance after initial-black RB insertion: Initial Black Insertion in an RB Tree.
+                                                             (line   42)
+* rebalance after PAVL deletion:         Deleting a PAVL Node Step 4 - Rebalance.
+                                                             (line    9)
+* rebalance after PAVL insertion:        Rebalancing PAVL Trees.
+                                                             (line   19)
+* rebalance after PRB insertion:         Step 3 in PRB Insertion.
+                                                             (line   29)
+* rebalance after RB deletion:           Deleting an RB Node Step 3 - Rebalance.
+                                                             (line   40)
+* rebalance after RB insertion:          Inserting an RB Node Step 3 - Rebalance.
+                                                             (line   38)
+* rebalance after RTAVL deletion in left subtree: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line   13)
+* rebalance after RTAVL deletion in right subtree: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line   36)
+* rebalance after RTAVL insertion:       Rebalancing RTAVL Trees.
+                                                             (line   15)
+* rebalance after RTRB deletion:         Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line   10)
+* rebalance after RTRB insertion:        Step 3 in RTRB Insertion.
+                                                             (line    9)
+* rebalance after TAVL deletion:         Deleting a TAVL Node Step 4 - Rebalance.
+                                                             (line   12)
+* rebalance after TAVL deletion, with stack: Answers for Chapter 8.
+                                                             (line  308)
+* rebalance after TAVL insertion:        Rebalancing TAVL Trees.
+                                                             (line   10)
+* rebalance after TRB insertion:         Step 3 in TRB Insertion.
+                                                             (line    9)
+* rebalance AVL tree after insertion in left subtree: Rebalancing AVL Trees.
+                                                             (line   43)
+* rebalance AVL tree after insertion in right subtree: AVL Insertion Symmetric Case.
+                                                             (line   11)
+* rebalance for + balance factor after left-side RTAVL deletion: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line  122)
+* rebalance for + balance factor after right-side RTAVL deletion: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line   76)
+* rebalance for + balance factor after TAVL deletion in left subtree: Deleting a TAVL Node Step 4 - Rebalance.
+                                                             (line  119)
+* rebalance for + balance factor after TAVL deletion in right subtree: TAVL Deletion Symmetric Case.
+                                                             (line   38)
+* rebalance for + balance factor in PAVL insertion in left subtree: Rebalancing PAVL Trees.
+                                                             (line   93)
+* rebalance for + balance factor in PAVL insertion in right subtree: PAVL Insertion Symmetric Case.
+                                                             (line   18)
+* rebalance for + balance factor in RTAVL insertion in left subtree: Rebalancing RTAVL Trees.
+                                                             (line  166)
+* rebalance for + balance factor in RTAVL insertion in right subtree: Rebalancing RTAVL Trees.
+                                                             (line  124)
+* rebalance for + balance factor in TAVL insertion in left subtree: Rebalancing TAVL Trees.
+                                                             (line  117)
+* rebalance for + balance factor in TAVL insertion in right subtree: TAVL Insertion Symmetric Case.
+                                                             (line   21)
+* rebalance for - balance factor after left-side RTAVL deletion: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line   69)
+* rebalance for - balance factor after right-side RTAVL deletion: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line  148)
+* rebalance for - balance factor after TAVL deletion in left subtree: Deleting a TAVL Node Step 4 - Rebalance.
+                                                             (line   42)
+* rebalance for - balance factor after TAVL deletion in right subtree: TAVL Deletion Symmetric Case.
+                                                             (line   52)
+* rebalance for - balance factor in PAVL insertion in left subtree: Rebalancing PAVL Trees.
+                                                             (line   60)
+* rebalance for - balance factor in PAVL insertion in right subtree: PAVL Insertion Symmetric Case.
+                                                             (line   26)
+* rebalance for - balance factor in RTAVL insertion in left subtree: Rebalancing RTAVL Trees.
+                                                             (line   95)
+* rebalance for - balance factor in RTAVL insertion in right subtree: Rebalancing RTAVL Trees.
+                                                             (line  196)
+* rebalance for - balance factor in TAVL insertion in left subtree: Rebalancing TAVL Trees.
+                                                             (line   50)
+* rebalance for - balance factor in TAVL insertion in right subtree: TAVL Insertion Symmetric Case.
+                                                             (line   35)
+* rebalance for 0 balance factor after left-side RTAVL deletion: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line   91)
+* rebalance for 0 balance factor after right-side RTAVL deletion: Deleting a RTAVL Node Step 4 - Rebalance.
+                                                             (line   95)
+* rebalance for 0 balance factor after TAVL deletion in left subtree: Deleting a TAVL Node Step 4 - Rebalance.
+                                                             (line   73)
+* rebalance for 0 balance factor after TAVL deletion in right subtree: TAVL Deletion Symmetric Case.
+                                                             (line   45)
+* rebalance PAVL tree after insertion in left subtree: Rebalancing PAVL Trees.
+                                                             (line   41)
+* rebalance PAVL tree after insertion in right subtree: PAVL Insertion Symmetric Case.
+                                                             (line    6)
+* rebalance RTAVL tree after insertion to left: Rebalancing RTAVL Trees.
+                                                             (line   37)
+* rebalance RTAVL tree after insertion to right: Rebalancing RTAVL Trees.
+                                                             (line   49)
+* rebalance TAVL tree after insertion in left subtree: Rebalancing TAVL Trees.
+                                                             (line   31)
+* rebalance TAVL tree after insertion in right subtree: TAVL Insertion Symmetric Case.
+                                                             (line    9)
+* rebalance tree after PRB deletion:     Deleting a PRB Node Step 3 - Rebalance.
+                                                             (line   17)
+* rebalance tree after RB deletion:      Deleting an RB Node Step 3 - Rebalance.
+                                                             (line   13)
+* rebalance tree after TRB deletion:     Deleting a TRB Node Step 3 - Rebalance.
+                                                             (line   10)
+* recurse_verify_tree function <1>:      Testing PRB Trees.  (line   82)
+* recurse_verify_tree function <2>:      Testing PAVL Trees. (line   74)
+* recurse_verify_tree function <3>:      Testing PBSTs.      (line   69)
+* recurse_verify_tree function <4>:      Testing RTRB Trees. (line   75)
+* recurse_verify_tree function <5>:      Testing RTAVL Trees.
+                                                             (line   75)
+* recurse_verify_tree function <6>:      Testing RTBSTs.     (line  125)
+* recurse_verify_tree function <7>:      Testing TRB Trees.  (line   86)
+* recurse_verify_tree function <8>:      Testing TAVL Trees. (line   86)
+* recurse_verify_tree function <9>:      Testing TBSTs.      (line  147)
+* recurse_verify_tree function <10>:     Testing RB Trees.   (line   84)
+* recurse_verify_tree function <11>:     Testing AVL Trees.  (line   88)
+* recurse_verify_tree function:          BST Verification.   (line  106)
+* recursive copy of BST, take 1:         Copying a BST Recursively.
+                                                             (line   10)
+* recursive copy of BST, take 2:         Copying a BST Recursively.
+                                                             (line   40)
+* recursive deallocation function:       Answers for Chapter 4.
+                                                             (line  746)
+* recursive insertion into AVL tree:     Recursive Insertion.
+                                                             (line   45)
+* recursive traversal of BST:            Recursive Traversal of a BST.
+                                                             (line   25)
+* recursive traversal of BST, using nested function: Answers for Chapter 4.
+                                                             (line  422)
+* recursively verify AVL tree structure: Testing AVL Trees.  (line   75)
+* recursively verify BST structure:      BST Verification.   (line   94)
+* recursively verify PAVL tree structure: Testing PAVL Trees.
+                                                             (line   69)
+* recursively verify PBST structure:     Testing PBSTs.      (line   64)
+* recursively verify PRB tree structure: Testing PRB Trees.  (line   69)
+* recursively verify RB tree structure:  Testing RB Trees.   (line   71)
+* recursively verify RTAVL tree structure: Testing RTAVL Trees.
+                                                             (line   70)
+* recursively verify RTBST structure:    Testing RTBSTs.     (line  120)
+* recursively verify RTRB tree structure: Testing RTRB Trees.
+                                                             (line   70)
+* recursively verify TAVL tree structure: Testing TAVL Trees.
+                                                             (line   81)
+* recursively verify TBST structure:     Testing TBSTs.      (line  142)
+* recursively verify TRB tree structure: Testing TRB Trees.  (line   81)
+* reduce TBST vine general case to special case: Transforming a Vine into a Balanced TBST.
+                                                             (line  122)
+* reduce vine general case to special case: Balancing Implementation.
+                                                             (line   77)
+* reject_request function:               Memory Manager.     (line  226)
+* right-side rebalancing after initial-black RB insertion: Initial Black Insertion in an RB Tree.
+                                                             (line  184)
+* right-side rebalancing after PRB deletion: PRB Deletion Symmetric Case.
+                                                             (line    6)
+* right-side rebalancing after PRB insertion: PRB Insertion Symmetric Case.
+                                                             (line    6)
+* right-side rebalancing after RB deletion: RB Deletion Symmetric Case.
+                                                             (line    6)
+* right-side rebalancing after RB insertion: RB Insertion Symmetric Case.
+                                                             (line    6)
+* right-side rebalancing after RTRB deletion: Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line   77)
+* right-side rebalancing after RTRB insertion: Step 3 in RTRB Insertion.
+                                                             (line   57)
+* right-side rebalancing after TRB deletion: TRB Deletion Symmetric Case.
+                                                             (line    6)
+* right-side rebalancing after TRB insertion: TRB Insertion Symmetric Case.
+                                                             (line    6)
+* right-side rebalancing case 1 in PAVL deletion: PAVL Deletion Symmetric Case.
+                                                             (line   25)
+* right-side rebalancing case 2 in PAVL deletion: PAVL Deletion Symmetric Case.
+                                                             (line   31)
+* robust recursive copy of BST, take 1:  Answers for Chapter 4.
+                                                             (line  716)
+* robust recursive copy of BST, take 2:  Answers for Chapter 4.
+                                                             (line  760)
+* robust recursive copy of BST, take 3:  Answers for Chapter 4.
+                                                             (line  792)
+* robust root insertion of existing node in arbitrary subtree: Answers for Chapter 4.
+                                                             (line  246)
+* robustly move BST node to root:        Answers for Chapter 4.
+                                                             (line  297)
+* robustly search for insertion point in arbitrary subtree: Answers for Chapter 4.
+                                                             (line  272)
+* root insertion of existing node in arbitrary subtree: Answers for Chapter 4.
+                                                             (line  199)
+* root_insert function:                  Answers for Chapter 4.
+                                                             (line  207)
+* rotate left at x then right at y in AVL tree: Rebalancing AVL Trees.
+                                                             (line  137)
+* rotate left at y in AVL tree:          AVL Insertion Symmetric Case.
+                                                             (line   23)
+* rotate right at x then left at y in AVL tree: AVL Insertion Symmetric Case.
+                                                             (line   30)
+* rotate right at y in AVL tree:         Rebalancing AVL Trees.
+                                                             (line   94)
+* rotate_left function <1>:              Answers for Chapter 14.
+                                                             (line   30)
+* rotate_left function <2>:              Answers for Chapter 11.
+                                                             (line   32)
+* rotate_left function <3>:              Answers for Chapter 8.
+                                                             (line   45)
+* rotate_left function:                  Answers for Chapter 4.
+                                                             (line   79)
+* rotate_right function <1>:             Answers for Chapter 14.
+                                                             (line   15)
+* rotate_right function <2>:             Answers for Chapter 11.
+                                                             (line   15)
+* rotate_right function <3>:             Answers for Chapter 8.
+                                                             (line   27)
+* rotate_right function:                 Answers for Chapter 4.
+                                                             (line   68)
+* RTAVL copy function:                   Copying an RTAVL Tree.
+                                                             (line   10)
+* RTAVL functions:                       RTAVL Operations.   (line   11)
+* RTAVL item deletion function:          Deleting from an RTAVL Tree.
+                                                             (line    8)
+* RTAVL item insertion function:         Inserting into an RTAVL Tree.
+                                                             (line    9)
+* RTAVL node copy function:              Copying an RTAVL Tree.
+                                                             (line   16)
+* RTAVL node structure:                  RTAVL Data Types.   (line   11)
+* rtavl-test.c:                          Testing RTAVL Trees.
+                                                             (line    6)
+* rtavl.c:                               Right-Threaded AVL Trees.
+                                                             (line   31)
+* rtavl.h:                               Right-Threaded AVL Trees.
+                                                             (line   15)
+* rtavl_delete function:                 Deleting from an RTAVL Tree.
+                                                             (line   12)
+* RTAVL_H macro:                         Right-Threaded AVL Trees.
+                                                             (line   18)
+* rtavl_node structure:                  RTAVL Data Types.   (line   22)
+* rtavl_probe function:                  Inserting into an RTAVL Tree.
+                                                             (line   13)
+* rtavl_tag enumeration:                 RTAVL Data Types.   (line   15)
+* RTBST balance function:                Balancing an RTBST. (line   10)
+* RTBST copy error helper function:      Copying an RTBST.   (line  126)
+* RTBST copy function:                   Copying an RTBST.   (line  141)
+* RTBST destruction function:            Destroying an RTBST.
+                                                             (line    9)
+* RTBST functions:                       RTBST Operations.   (line    6)
+* RTBST item deletion function:          Deleting from an RTBST.
+                                                             (line   15)
+* RTBST item insertion function:         Inserting into an RTBST.
+                                                             (line   14)
+* RTBST main copy function:              Copying an RTBST.   (line   20)
+* RTBST node copy function:              Copying an RTBST.   (line   86)
+* RTBST node structure:                  RTBST Data Types.   (line    6)
+* RTBST print function:                  Testing RTBSTs.     (line   24)
+* RTBST search function:                 Searching an RTBST. (line   13)
+* RTBST traversal functions:             Traversing an RTBST.
+                                                             (line   17)
+* RTBST traverser advance function:      RTBST Traverser Advancing.
+                                                             (line   11)
+* RTBST traverser back up function:      RTBST Traverser Retreating.
+                                                             (line   12)
+* RTBST traverser first initializer:     RTBST Traverser First Initialization.
+                                                             (line   10)
+* RTBST traverser last initializer:      RTBST Traverser Last Initialization.
+                                                             (line   10)
+* RTBST traverser search initializer:    RTBST Traverser Find Initialization.
+                                                             (line    9)
+* RTBST tree-to-vine function:           Balancing an RTBST. (line   21)
+* RTBST vine compression function:       Balancing an RTBST. (line   56)
+* rtbst-test.c:                          Testing RTBSTs.     (line    8)
+* rtbst.c:                               Right-Threaded Binary Search Trees.
+                                                             (line   67)
+* rtbst.h:                               Right-Threaded Binary Search Trees.
+                                                             (line   51)
+* rtbst_copy function:                   Copying an RTBST.   (line   25)
+* rtbst_delete function:                 Deleting from an RTBST.
+                                                             (line   19)
+* rtbst_destroy function:                Destroying an RTBST.
+                                                             (line   13)
+* rtbst_find function:                   Searching an RTBST. (line   17)
+* RTBST_H macro:                         Right-Threaded Binary Search Trees.
+                                                             (line   54)
+* rtbst_node structure:                  RTBST Data Types.   (line   17)
+* rtbst_probe function:                  Inserting into an RTBST.
+                                                             (line   18)
+* rtbst_t_find function:                 RTBST Traverser Find Initialization.
+                                                             (line   14)
+* rtbst_t_first function:                RTBST Traverser First Initialization.
+                                                             (line   14)
+* rtbst_t_last function:                 RTBST Traverser Last Initialization.
+                                                             (line   14)
+* rtbst_t_next function:                 RTBST Traverser Advancing.
+                                                             (line   15)
+* rtbst_t_prev function:                 RTBST Traverser Retreating.
+                                                             (line   16)
+* rtbst_tag enumeration:                 RTBST Data Types.   (line   10)
+* RTRB functions:                        RTRB Operations.    (line   10)
+* RTRB item deletion function:           Deleting from an RTRB Tree.
+                                                             (line   10)
+* RTRB item insertion function:          Inserting into an RTRB Tree.
+                                                             (line   10)
+* RTRB node structure:                   RTRB Data Types.    (line   10)
+* rtrb-test.c:                           Testing RTRB Trees. (line    6)
+* rtrb.c:                                Right-Threaded Red-Black Trees.
+                                                             (line   28)
+* rtrb.h:                                Right-Threaded Red-Black Trees.
+                                                             (line   12)
+* rtrb_color enumeration:                RTRB Data Types.    (line   14)
+* rtrb_delete function:                  Deleting from an RTRB Tree.
+                                                             (line   14)
+* RTRB_H macro:                          Right-Threaded Red-Black Trees.
+                                                             (line   15)
+* rtrb_node structure:                   RTRB Data Types.    (line   28)
+* rtrb_probe function:                   Inserting into an RTRB Tree.
+                                                             (line   14)
+* rtrb_tag enumeration:                  RTRB Data Types.    (line   21)
+* run search tests:                      Answers for Chapter 3.
+                                                             (line  447)
+* s variable <1>:                        Answers for Chapter 11.
+                                                             (line  151)
+* s variable <2>:                        Answers for Chapter 9.
+                                                             (line  152)
+* s variable:                            Answers for Chapter 5.
+                                                             (line  197)
+* search AVL tree for insertion point:   Step 1 in AVL Insertion.
+                                                             (line   17)
+* search AVL tree for item to delete:    Deleting an AVL Node Step 1 - Search.
+                                                             (line   16)
+* search BST for insertion point, root insertion version: Root Insertion in a BST.
+                                                             (line   68)
+* search for insertion point in arbitrary subtree: Answers for Chapter 4.
+                                                             (line  222)
+* search functions:                      Answers for Chapter 3.
+                                                             (line  180)
+* search of binary search tree stored as array: Binary Search Tree in Array.
+                                                             (line   90)
+* search PAVL tree for insertion point:  Steps 1 and 2 in PAVL Insertion.
+                                                             (line   15)
+* search PBST tree for insertion point:  Inserting into a PBST.
+                                                             (line   26)
+* search RB tree for insertion point:    Inserting an RB Node Step 1 - Search.
+                                                             (line   11)
+* search RTAVL tree for insertion point: Steps 1-1 in RTAVL Insertion.
+                                                             (line   12)
+* search RTAVL tree for item to delete:  Deleting a RTAVL Node Step 1 - Search.
+                                                             (line   11)
+* search RTBST for insertion point:      Inserting into an RTBST.
+                                                             (line   30)
+* search RTRB tree for insertion point:  Steps 1 and 2 in RTRB Insertion.
+                                                             (line   13)
+* search TAVL tree for insertion point:  Steps 1 and 2 in TAVL Insertion.
+                                                             (line   14)
+* search TAVL tree for item to delete:   Deleting a TAVL Node Step 1 - Search.
+                                                             (line   11)
+* search TBST for insertion point:       Inserting into a TBST.
+                                                             (line   57)
+* search test functions:                 Answers for Chapter 3.
+                                                             (line  285)
+* search test main program:              Answers for Chapter 3.
+                                                             (line  377)
+* search TRB tree for insertion point:   Steps 1 and 2 in TRB Insertion.
+                                                             (line    8)
+* search TRB tree for item to delete:    Deleting a TRB Node Step 1 - Search.
+                                                             (line    8)
+* search_func structure:                 Answers for Chapter 3.
+                                                             (line  199)
+* seq-test.c:                            Answers for Chapter 3.
+                                                             (line   13)
+* sequentially search a sorted array of ints: Sequential Search of Ordered Array.
+                                                             (line   23)
+* sequentially search a sorted array of ints using a sentinel: Sequential Search of Ordered Array with Sentinel.
+                                                             (line   11)
+* sequentially search a sorted array of ints using a sentinel (2): Sequential Search of Ordered Array with Sentinel.
+                                                             (line   46)
+* sequentially search an array of ints:  Sequential Search.  (line   19)
+* sequentially search an array of ints using a sentinel: Sequential Search with Sentinel.
+                                                             (line   30)
+* set parents of main vine:              Answers for Chapter 13.
+                                                             (line   48)
+* show bin-ary-test usage message:       Answers for Chapter 3.
+                                                             (line  638)
+* srch-test.c:                           Answers for Chapter 3.
+                                                             (line  164)
+* start_timer function:                  Answers for Chapter 3.
+                                                             (line  253)
+* stoi function <1>:                     Answers for Chapter 3.
+                                                             (line  421)
+* stoi function:                         Command-Line Parser.
+                                                             (line   34)
+* stop_timer function:                   Answers for Chapter 3.
+                                                             (line  274)
+* string to integer function stoi():     Answers for Chapter 3.
+                                                             (line  415)
+* summing string lengths with next_item(): Improving Convenience.
+                                                             (line   37)
+* summing string lengths with walk():    Improving Convenience.
+                                                             (line   15)
+* symmetric case in PAVL deletion:       PAVL Deletion Symmetric Case.
+                                                             (line    6)
+* symmetric case in TAVL deletion:       TAVL Deletion Symmetric Case.
+                                                             (line    8)
+* symmetric case in TAVL deletion, with stack: Answers for Chapter 8.
+                                                             (line  342)
+* table assertion function control directives: Answers for Chapter 2.
+                                                             (line  331)
+* table assertion function prototypes:   Assertions.         (line   15)
+* table assertion functions:             Answers for Chapter 2.
+                                                             (line  360)
+* table count function prototype:        Count.              (line    8)
+* table count macro:                     Answers for Chapter 2.
+                                                             (line  272)
+* table creation function prototypes:    Creation and Destruction.
+                                                             (line    8)
+* table function prototypes:             Table Headers.      (line   17)
+* table function types <1>:              Item and Copy Functions.
+                                                             (line    9)
+* table function types:                  Comparison Function.
+                                                             (line   21)
+* table insertion and deletion function prototypes: Insertion and Deletion.
+                                                             (line   29)
+* table insertion convenience functions: Answers for Chapter 2.
+                                                             (line  296)
+* table types:                           Table Headers.      (line    9)
+* TAVL copy function:                    Copying a TAVL Tree.
+                                                             (line   42)
+* TAVL functions:                        TAVL Operations.    (line   11)
+* TAVL item deletion function:           Deleting from a TAVL Tree.
+                                                             (line   14)
+* TAVL item deletion function, with stack: Answers for Chapter 8.
+                                                             (line  161)
+* TAVL item insertion function:          Inserting into a TAVL Tree.
+                                                             (line   10)
+* TAVL node copy function:               Copying a TAVL Tree.
+                                                             (line   10)
+* TAVL node structure:                   TAVL Data Types.    (line   10)
+* tavl-test.c:                           Testing TAVL Trees. (line    8)
+* tavl.c:                                Threaded AVL Trees. (line   38)
+* tavl.h:                                Threaded AVL Trees. (line   22)
+* tavl_delete function <1>:              Answers for Chapter 8.
+                                                             (line  165)
+* tavl_delete function:                  Deleting from a TAVL Tree.
+                                                             (line   20)
+* TAVL_H macro:                          Threaded AVL Trees. (line   25)
+* tavl_node structure:                   TAVL Data Types.    (line   21)
+* tavl_probe function:                   Inserting into a TAVL Tree.
+                                                             (line   14)
+* tavl_tag enumeration:                  TAVL Data Types.    (line   14)
+* tbl_allocator_default variable:        Memory Allocation.  (line   76)
+* tbl_assert_delete function:            Answers for Chapter 2.
+                                                             (line  374)
+* tbl_assert_delete macro:               Answers for Chapter 2.
+                                                             (line  338)
+* tbl_assert_insert function:            Answers for Chapter 2.
+                                                             (line  367)
+* tbl_assert_insert macro:               Answers for Chapter 2.
+                                                             (line  337)
+* tbl_comparison_func type:              Comparison Function.
+                                                             (line   23)
+* tbl_copy_func type:                    Item and Copy Functions.
+                                                             (line   11)
+* tbl_count macro:                       Answers for Chapter 2.
+                                                             (line  273)
+* tbl_free function:                     Memory Allocation.  (line   58)
+* tbl_insert function:                   Answers for Chapter 2.
+                                                             (line  301)
+* tbl_item_func type:                    Item and Copy Functions.
+                                                             (line   10)
+* tbl_malloc_abort function:             Answers for Chapter 2.
+                                                             (line  196)
+* tbl_replace function:                  Answers for Chapter 2.
+                                                             (line  308)
+* TBST balance function:                 Balancing a TBST.   (line   21)
+* TBST copy error helper function:       Copying a TBST.     (line  214)
+* TBST copy function:                    Copying a TBST.     (line  112)
+* TBST creation function:                Creating a TBST.    (line    9)
+* TBST destruction function:             Destroying a TBST.  (line   13)
+* TBST functions:                        TBST Operations.    (line   13)
+* TBST item deletion function:           Deleting from a TBST.
+                                                             (line   14)
+* TBST item insertion function:          Inserting into a TBST.
+                                                             (line   40)
+* TBST main balance function:            Balancing a TBST.   (line   28)
+* TBST main copy function:               Copying a TBST.     (line  118)
+* TBST node copy function:               Copying a TBST.     (line   64)
+* TBST node structure:                   TBST Data Types.    (line   11)
+* TBST print function:                   Testing TBSTs.      (line   35)
+* TBST search function:                  Searching a TBST.   (line   11)
+* TBST table structure:                  TBST Data Types.    (line   35)
+* TBST test function:                    Testing TBSTs.      (line  205)
+* TBST traversal functions:              Traversing a TBST.  (line   39)
+* TBST traverser advance function:       TBST Traverser Advancing.
+                                                             (line   14)
+* TBST traverser back up function:       TBST Traverser Retreating.
+                                                             (line    6)
+* TBST traverser copy initializer:       TBST Traverser Copying.
+                                                             (line    6)
+* TBST traverser first initializer:      TBST Traverser First Initialization.
+                                                             (line    6)
+* TBST traverser insertion initializer:  TBST Traverser Insert Initialization.
+                                                             (line   10)
+* TBST traverser last initializer:       TBST Traverser Last Initialization.
+                                                             (line    6)
+* TBST traverser null initializer:       TBST Traverser Null Initialization.
+                                                             (line    6)
+* TBST traverser search initializer:     TBST Traverser Find Initialization.
+                                                             (line    9)
+* TBST traverser structure:              Traversing a TBST.  (line   24)
+* TBST tree-to-vine function:            Transforming a TBST into a Vine.
+                                                             (line   18)
+* TBST verify function:                  Testing TBSTs.      (line  168)
+* TBST vine compression function:        Transforming a Vine into a Balanced TBST.
+                                                             (line   84)
+* TBST vine-to-tree function:            Transforming a Vine into a Balanced TBST.
+                                                             (line   15)
+* tbst-test.c:                           Testing TBSTs.      (line   19)
+* tbst.c:                                Threaded Binary Search Trees.
+                                                             (line   48)
+* tbst.h:                                Threaded Binary Search Trees.
+                                                             (line   32)
+* tbst_balance function:                 Balancing a TBST.   (line   33)
+* tbst_copy function:                    Copying a TBST.     (line  123)
+* tbst_create function:                  Creating a TBST.    (line   14)
+* tbst_delete function:                  Deleting from a TBST.
+                                                             (line   18)
+* tbst_destroy function:                 Destroying a TBST.  (line   17)
+* tbst_find function:                    Searching a TBST.   (line   15)
+* TBST_H macro:                          Threaded Binary Search Trees.
+                                                             (line   35)
+* tbst_link structure:                   Answers for Chapter 7.
+                                                             (line   56)
+* tbst_node structure <1>:               Answers for Chapter 7.
+                                                             (line   63)
+* tbst_node structure:                   TBST Data Types.    (line   22)
+* tbst_probe function:                   Inserting into a TBST.
+                                                             (line   44)
+* tbst_t_copy function:                  TBST Traverser Copying.
+                                                             (line   10)
+* tbst_t_find function:                  TBST Traverser Find Initialization.
+                                                             (line   13)
+* tbst_t_first function:                 TBST Traverser First Initialization.
+                                                             (line   10)
+* tbst_t_init function:                  TBST Traverser Null Initialization.
+                                                             (line   10)
+* tbst_t_insert function:                TBST Traverser Insert Initialization.
+                                                             (line   15)
+* tbst_t_last function:                  TBST Traverser Last Initialization.
+                                                             (line   10)
+* tbst_t_next function:                  TBST Traverser Advancing.
+                                                             (line   18)
+* tbst_t_prev function:                  TBST Traverser Retreating.
+                                                             (line   10)
+* tbst_table structure <1>:              Answers for Chapter 7.
+                                                             (line   70)
+* tbst_table structure:                  TBST Data Types.    (line   39)
+* tbst_tag enumeration:                  TBST Data Types.    (line   15)
+* tbst_traverser structure:              Traversing a TBST.  (line   28)
+* test BST traversal during modifications: Testing BSTs.     (line  106)
+* test creating a BST and inserting into it: Testing BSTs.   (line   61)
+* test declarations <1>:                 Main Program.       (line    9)
+* test declarations <2>:                 User Interaction.   (line   22)
+* test declarations <3>:                 Memory Manager.     (line   15)
+* test declarations:                     Test Set Generation.
+                                                             (line   11)
+* test deleting from an empty tree:      Testing BSTs.       (line  307)
+* test deleting nodes from the BST and making copies of it: Testing BSTs.
+                                                             (line  213)
+* test destroying the tree:              Testing BSTs.       (line  317)
+* test enumeration:                      Main Program.       (line   13)
+* test main program:                     Main Program.       (line   50)
+* test prototypes <1>:                   Utility Functions.  (line   19)
+* test prototypes <2>:                   Testing Overflow.   (line   97)
+* test prototypes:                       Testing BSTs.       (line   48)
+* test TBST balancing:                   Testing TBSTs.      (line  225)
+* test utility functions:                Utility Functions.  (line   10)
+* test.c:                                Testing BST Functions.
+                                                             (line   89)
+* test.h:                                Testing BST Functions.
+                                                             (line  131)
+* test_bst_copy function:                Answers for Chapter 4.
+                                                             (line 1350)
+* test_bst_t_find function:              Answers for Chapter 4.
+                                                             (line 1264)
+* test_bst_t_first function:             Testing Overflow.   (line  108)
+* test_bst_t_insert function:            Answers for Chapter 4.
+                                                             (line 1286)
+* test_bst_t_last function:              Answers for Chapter 4.
+                                                             (line 1247)
+* test_bst_t_next function:              Answers for Chapter 4.
+                                                             (line 1308)
+* test_bst_t_prev function:              Answers for Chapter 4.
+                                                             (line 1329)
+* test_correctness function <1>:         Answers for Chapter 4.
+                                                             (line 1459)
+* test_correctness function <2>:         Testing TBSTs.      (line  210)
+* test_correctness function:             Testing BSTs.       (line   32)
+* TEST_H macro:                          Testing BST Functions.
+                                                             (line  134)
+* test_options enumeration:              Main Program.       (line   25)
+* test_overflow function <1>:            Answers for Chapter 4.
+                                                             (line 1484)
+* test_overflow function:                Testing Overflow.   (line   29)
+* time_seed function:                    Answers for Chapter 4.
+                                                             (line 1223)
+* time_successful_search function:       Answers for Chapter 3.
+                                                             (line  333)
+* time_unsuccessful_search function:     Answers for Chapter 3.
+                                                             (line  359)
+* timer functions:                       Answers for Chapter 3.
+                                                             (line  248)
+* total_length function:                 Improving Convenience.
+                                                             (line   28)
+* transform left-side PRB deletion rebalancing case 3 into case 2: Deleting a PRB Node Step 3 - Rebalance.
+                                                             (line  181)
+* transform left-side RB deletion rebalancing case 3 into case 2: Deleting an RB Node Step 3 - Rebalance.
+                                                             (line  243)
+* transform left-side RTRB deletion rebalancing case 3 into case 2: Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line  189)
+* transform left-side TRB deletion rebalancing case 3 into case 2: Deleting a TRB Node Step 3 - Rebalance.
+                                                             (line  144)
+* transform right-side PRB deletion rebalancing case 3 into case 2: PRB Deletion Symmetric Case.
+                                                             (line   70)
+* transform right-side RB deletion rebalancing case 3 into case 2: RB Deletion Symmetric Case.
+                                                             (line   52)
+* transform right-side RTRB deletion rebalancing case 3 into case 2: Deleting an RTRB Node Step 3 - Rebalance.
+                                                             (line  217)
+* transform right-side TRB deletion rebalancing case 3 into case 2: TRB Deletion Symmetric Case.
+                                                             (line   53)
+* trav_refresh function <1>:             Answers for Chapter 4.
+                                                             (line  660)
+* trav_refresh function:                 Better Iterative Traversal.
+                                                             (line   77)
+* traverse_iterative function <1>:       Answers for Chapter 4.
+                                                             (line  483)
+* traverse_iterative function:           Iterative Traversal of a BST.
+                                                             (line   55)
+* traverse_recursive function:           Recursive Traversal of a BST.
+                                                             (line   29)
+* traverser constructor function prototypes: Constructors.   (line   10)
+* traverser manipulator function prototypes: Manipulators.   (line    8)
+* traverser structure:                   Improving Convenience.
+                                                             (line   65)
+* TRB functions:                         TRB Operations.     (line   11)
+* TRB item deletion function:            Deleting from a TRB Tree.
+                                                             (line    8)
+* TRB item deletion function, without stack: Answers for Chapter 9.
+                                                             (line  192)
+* TRB item insertion function:           Inserting into a TRB Tree.
+                                                             (line    8)
+* TRB item insertion function, without stack: Answers for Chapter 9.
+                                                             (line   12)
+* TRB node structure:                    TRB Data Types.     (line   11)
+* trb-test.c:                            Testing TRB Trees.  (line    8)
+* trb.c:                                 Threaded Red-Black Trees.
+                                                             (line   30)
+* trb.h:                                 Threaded Red-Black Trees.
+                                                             (line   14)
+* trb_color enumeration:                 TRB Data Types.     (line   15)
+* trb_delete function <1>:               Answers for Chapter 9.
+                                                             (line  198)
+* trb_delete function:                   Deleting from a TRB Tree.
+                                                             (line   12)
+* TRB_H macro:                           Threaded Red-Black Trees.
+                                                             (line   17)
+* trb_node structure:                    TRB Data Types.     (line   29)
+* trb_probe function <1>:                Answers for Chapter 9.
+                                                             (line   18)
+* trb_probe function:                    Inserting into a TRB Tree.
+                                                             (line   12)
+* trb_tag enumeration:                   TRB Data Types.     (line   22)
+* tree_to_vine function <1>:             Balancing an RTBST. (line   25)
+* tree_to_vine function <2>:             Transforming a TBST into a Vine.
+                                                             (line   22)
+* tree_to_vine function:                 Transforming a BST into a Vine.
+                                                             (line   65)
+* uniform binary search of ordered array: Answers for Chapter 3.
+                                                             (line   59)
+* update balance factors after AVL insertion: Step 3 in AVL Insertion.
+                                                             (line  152)
+* update balance factors after AVL insertion, with bitmasks: Answers for Chapter 5.
+                                                             (line   92)
+* update balance factors after PAVL insertion: Step 3 in PAVL Insertion.
+                                                             (line   20)
+* update balance factors and rebalance after AVL deletion: Deleting an AVL Node Step 3 - Update.
+                                                             (line   29)
+* update balance factors and rebalance after PAVL deletion: Deleting a PAVL Node Step 3 - Update.
+                                                             (line   10)
+* update balance factors and rebalance after RTAVL deletion: Deleting a RTAVL Node Step 3 - Update.
+                                                             (line    9)
+* update balance factors and rebalance after TAVL deletion: Deleting a TAVL Node Step 3 - Update.
+                                                             (line   22)
+* update balance factors and rebalance after TAVL deletion, with stack: Answers for Chapter 8.
+                                                             (line  285)
+* update parent pointers function:       Balancing a PBST.   (line   70)
+* update y's balance factor after left-side AVL deletion: Deleting an AVL Node Step 3 - Update.
+                                                             (line  142)
+* update y's balance factor after right-side AVL deletion: AVL Deletion Symmetric Case.
+                                                             (line    9)
+* update_parents function:               Balancing a PBST.   (line   74)
+* usage function <1>:                    Answers for Chapter 3.
+                                                             (line  462)
+* usage function:                        Command-Line Parser.
+                                                             (line   42)
+* usage printer for search test program: Answers for Chapter 3.
+                                                             (line  457)
+* verify AVL node balance factor:        Testing AVL Trees.  (line  113)
+* verify binary search tree ordering:    BST Verification.   (line  124)
+* verify PBST node parent pointers:      Testing PBSTs.      (line   90)
+* verify RB node color:                  Testing RB Trees.   (line  111)
+* verify RB node rule 1 compliance:      Testing RB Trees.   (line  121)
+* verify RB node rule 2 compliance:      Testing RB Trees.   (line  141)
+* verify RTRB node rule 1 compliance:    Testing RTRB Trees. (line  105)
+* verify TRB node rule 1 compliance:     Testing TRB Trees.  (line  117)
+* verify_tree function <1>:              Testing TBSTs.      (line  172)
+* verify_tree function <2>:              Testing RB Trees.   (line  156)
+* verify_tree function <3>:              Testing AVL Trees.  (line  132)
+* verify_tree function:                  BST Verification.   (line   19)
+* vine to balanced BST function:         Balancing Implementation.
+                                                             (line    9)
+* vine to balanced PBST function:        Balancing a PBST.   (line   30)
+* vine to balanced PBST function, with parent updates: Answers for Chapter 13.
+                                                             (line   30)
+* vine_to_tree function <1>:             Answers for Chapter 13.
+                                                             (line   36)
+* vine_to_tree function <2>:             Balancing a PBST.   (line   36)
+* vine_to_tree function:                 Transforming a Vine into a Balanced TBST.
+                                                             (line   19)
+* walk function <1>:                     Answers for Chapter 4.
+                                                             (line  426)
+* walk function:                         Recursive Traversal of a BST.
+                                                             (line   45)
+* xmalloc function:                      Utility Functions.  (line   54)
+
+

@@ -1,0 +1,139 @@
+#! /usr/bin/perl
+
+# GNU libavl - library for manipulation of binary trees.
+# Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004 Free Software
+# Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to: Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
+# 02110-1301 USA.
+
+# Arguments.
+if (@ARGV != 2) {
+    print "usage: $0 input.eps output.png\n";
+    exit 1;
+}
+$in = $ARGV[0];		# Input file
+$out = $ARGV[1];	# Output file
+
+# Preferences.
+$res = 100;		# Resolution of conversion in pixels per inch.
+$mag = 4;		# Antialiasing magnification factor.
+$transparency = 1;	# Turn off to increase quality but reduce generality.
+$eps2png_version = 1;	# Increment when changing eps2png.
+$tmpout = "$out.tmp.$$";# Temporary file to hold Ghostscript output.
+
+# Check whether the .eps, or our configuration, has really changed
+# since the last time the .png was updated.
+($md5) = lc (`md5sum $in` =~ /^([0-9a-fA-F]*)/);
+$args = "eps2png:$res,$mag,$transparency,$version,$md5";
+if (read_eps2png_comment ($out) eq $args) {
+    # Just `touch' the output file.
+    print "$0: $in unchanged since $out produced, updating date only\n";
+    $now = time;
+    utime ($now, $now, $out);
+    exit 0;
+}
+
+sub read_eps2png_comment {
+    my ($png) = @_;
+    open (PNG, "<$png");
+    my ($signature);
+    read (PNG, $signature, 8);
+    return "not a .PNG" 
+      	if (unpack ("H16", $signature) ne '89504e470d0a1a0a');
+    for (;;) {
+	my ($chunkheader);
+	read (PNG, $chunkheader, 8);
+	my ($length, $chunktype) = unpack ("NA4", $chunkheader);
+
+	if ($chunktype eq 'tEXt') {
+	    my ($textfield);
+	    read (PNG, $textfield, $length);
+	    my ($title, $content) = $textfield =~ /^(.*)\0(.*)$/;
+	    if ($title eq 'comment' && $content =~ /^eps2png:/) {
+		return $content;
+	    }
+	} elsif ($chunktype eq 'IEND') {
+	    return "no eps2png comment";
+	} else {
+	    seek (PNG, $length, 1);
+	}
+
+	my ($crc);
+	read (PNG, $crc, 4);
+	if (eof (PNG)) {
+	    return "no eps2png comment and no IEND chunk";
+	}
+    }
+    close (PNG);
+    return "PNG!";
+}
+
+# Make sure that Ghostscript and Imagemagick are available.
+if (!search_path ("gs") || !search_path("convert")) {
+    print "$0: can't find `gs' or `convert' in path\n";
+    print "$0: do you have Ghostscript and Imagemagick installed?\n";
+    exit 1;
+}
+
+sub search_path {
+    my ($program) = @_;
+    for $dir (split (':', $ENV{'PATH'})) {
+	return 1 if -x "$dir/$program";
+    }
+    return 0;
+}
+
+# Read bounding box out of .eps.
+open (EPS, "<$in");
+while (<EPS>) {
+    (($llx, $lly, $urx, $ury) = /^%%BoundingBox:\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/) && last;
+}
+close EPS;
+defined ($ury) || die "couldn't find bounding box\n";
+
+# Calculate size of final .png in pixels.
+$w = int (($urx - $llx) / 72 * $res);
+$h = int (($ury - $lly) / 72 * $res);
+
+# Convert .eps to oversize .png.
+open (EPS, "<$in");
+open (GS,
+      "|gs -q"
+      . " -r" . ($res * $mag)				# Resolution
+      . " -g" . ($w * $mag) . "x" . ($h * $mag)		# Size 
+      . " -sDEVICE=pnggray"
+      . " -sOutputFile=$tmpout"
+      . " -dNOPAUSE"
+      . " -")
+    || die;
+print GS "-$llx -$lly translate\n";
+while (<EPS>) {
+    print GS $_;
+}
+print GS "quit\n";
+close GS;
+close EPS;
+
+# Convert oversize .png to proper size .png with antialiasing and
+# comment.
+system ("convert"
+	. ($transparency ? " -transparent white" : "")
+	. " -antialias "
+	. " -scale ${w}x${h} "
+	. " -comment \"$args\" "
+	. "$tmpout $out")
+    == 0 || die;
+unlink ($tmpout) || print "$0: deleting $tmpout: $!\n";

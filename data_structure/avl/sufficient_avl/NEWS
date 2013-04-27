@@ -1,0 +1,197 @@
+libavl NEWS -- history of user-visible changes.  
+Time-stamp: <2007-08-25 16:48:24 blp>
+Copyright (C) 1998, 1999 Free Software Foundation, Inc.
+See the end for copying conditions.
+
+Please send libavl bug reports to bug-avl@gnu.org.
+
+Changes for version 2.0.3:
+
+  Previously, all of libavl was under GPL version 2.  Now, the libavl
+  book is under the GNU Free Documentation License (version 1.2 or
+  later), the libraries under the GNU Lesser General Public License
+  (version 3 or later), and programs under the GNU General Public
+  License (version 3 or later).  Refer to README for details.
+
+  Fix incompatibility between libavl and recent versions of Texinfo.
+  libavl now recommends Texinfo 4.8.
+
+  BST_MAX_HEIGHT, AVL_MAX_HEIGHT, RB_MAX_HEIGHT were fixed to use the
+  maximum, not minimum, height of a tree, and to have reasonable
+  values for 64-bit systems.  The lower bound on the number of nodes
+  in an AVL tree was fixed also.
+
+  Fixed the spelling of referenced paper author Quentin Stout's name.
+
+  Fixed a few minor typographical problems.
+
+  Updated INSTALL to explain the intended use of libavl.
+
+  The PDF version of libavl is now generated with pdftex, instead of
+  using dvipdfm.
+
+  libavl now has a dedicated mailing list for reporting bugs:
+  bug-avl@gnu.org.
+
+Changes for version 2.0.2:
+
+  Fixed a bug in tavl_delete() found by Petr Silhavy.  This is the
+  same bug fixed by the patch posted to the libavl website.  Both the
+  bug and patch are quite old.
+
+  Version 2.0.1 was (again) incompatible with recent versions of
+  Texinfo.  libavl now recommends Texinfo 4.7.
+
+  The HTML output now links from each code segment to a fully-expanded
+  version of the code segment.  Thanks to "Nobody" <nobody@cox.net>
+  for the inspiration.
+
+  A few typos have been fixed in the text, and some esthetic fixes
+  have been made to the libavl library code.
+
+Changes for version 2.0.1:
+
+  Some of the exercise answers in version 2.0 were misnumbered.  This
+  has been corrected.
+
+  Version 2.0 was incompatible with recent versions of Texinfo.
+  libavl now requires Texinfo 4.1 or later to build the HTML version
+  and at least that version is recommended in any case.
+
+  The book can now be produced in an attractive HTML format.
+  Imagemagick (http://www.imagemagick.org) is a new build requirement
+  for the HTML version if any .tree files are modified.  Ghostscript
+  is also needed.
+
+  A bug in the "texiweb" utility that caused some files to be
+  needlessly recompiled has been fixed.
+
+  dvipdfm (http://gaspra.kettering.edu/dvipdfm) is now used for
+  generating the PDF version of the book, resulting in better quality.
+
+  A few typos have been fixed in the text, and some esthetic fixes
+  have been made to the libavl library code.
+
+Changes for version 2.0:
+
+  Major new release.  Source and binary incompatible with previous
+  releases.
+
+  Now written as a literate program using a custom software
+  documentation system called TexiWEB.
+
+  Memory allocation for trees can be more flexibly controlled.
+  Allocation failure is no longer a fatal error.
+
+  Traversers are generalized to allow iteration forward and backward
+  in any kind of tree.  Traversal can begin anywhere in a tree.  Many
+  other new traversal features.
+
+  Several new kinds of trees.  Unbalanced ordinary binary trees will
+  be fully rebalanced automatically if they grow too tall for a
+  fixed-size stack.  Other kinds of unbalanced binary trees will never
+  be rebalanced automatically, but there is a function to call to do
+  it manually:
+
+    * Unbalanced binary trees, in bst.c and bst.h.
+    * Unbalanced threaded binary trees, in tbst.c and tbst.h.
+    * Threaded red-black trees, in trb.c and trb.h.
+    * Unbalanced right-threaded binary trees, in rtbst.c and rtbst.h.
+    * Right-threaded red-black trees, in rtrb.c and rtrb.h.
+    * Unbalanced binary trees with parent pointers, in pbst.c and pbst.h.
+    * AVL trees with parent pointers, in pavl.c and pavl.h.
+    * Red-black trees with parent pointers, in prb.c and prb.h.
+
+  Tree destruction algorithm changed to avoid use of a stack.
+
+Changes for version 1.4.0:
+
+  Implemented red-black trees.
+
+  New functions, *_init_traverser(), to initialize a *_traverser
+  structure.  New macros *_TRAVERSER_INIT for same purpose.
+
+Changes for version 1.3.0:
+
+  Now uses Autoconf and Automake to configure.  Thanks to Alexandre
+  Oliva <oliva@dcc.unicamp.br>.
+
+  New: automated testing with `make check'.
+
+  Fixes for strict ANSI C compliance.
+
+  Fixed useless assertions.  Fixed bug regarding empty trees for some
+  operations with threaded and right-threaded trees.  Thanks to
+  "Ficarra, David W, NNAD" <dficarra@att.com>.
+
+  New functions, avl*_find_close(), for finding a node in the tree
+  with a value close to a specified value.  See documentation and
+  source code for more details.  Thanks to Thomas Binder
+  <binder@iue.tuwien.ac.at>.
+
+Changes for version 1.2.9:
+ 
+  Fix typos in documentation.  Thanks to onTy Toom <onty@yahoo.com>.
+
+Changes for version 1.2.8:
+
+  Fixed typos in assertions.  Thanks to Girish Zambre
+  <gzambre@sprynet.com>.
+
+  Better support for gcc 2.7.x.
+
+Changes for versions 1.2.4, 1.2.5, 1.2.6, 1.2.7:
+
+  Documentation updates.  Thanks to Ron Pfeifle <rpfeifle@aw.sgi.com>,
+  Jason Eisner <jeisner@linc.cis.upenn.edu>, and others.
+
+Changes for version 1.2.3:
+
+  The library's allocation function xmalloc() can easily be overridden
+  by the library's user.  Thanks to Clayton Weaver <cgweav@eskimo.com>
+  for the idea.
+
+Changes for version 1.2.2:
+
+  Documentation fixes.  Thanks to Akim Demaille <demaille@inf.enst.fr>
+  for pointing these out.
+
+Changes for version 1.2.1:
+
+  Bug fixes.
+
+Changes for version 1.2.0:
+
+  Implemented right-threaded trees.
+
+  Added functions to convert among AVL tree types.
+
+  First GNU release.
+
+Changes for version 1.1.0:
+
+  Implemented threaded trees.
+
+Changes for version 1.0:
+
+  First public release.
+
+----------------------------------------------------------------------
+Copyright information:
+
+Copyright (C) 1998, 1999 Free Software Foundation, Inc.
+
+   Permission is granted to anyone to make or distribute verbatim
+   copies of this document as received, in any medium, provided that
+   the copyright notice and this permission notice are preserved, thus
+   giving the recipient permission to redistribute in turn.
+
+   Permission is granted to distribute modified versions of this
+   document, or of portions of it, under the above conditions,
+   provided also that they carry prominent notices stating who last
+   changed them.
+
+Local variables:
+version-control: never
+mode: indented-text
+end:

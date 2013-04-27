@@ -1,0 +1,111 @@
+Outline
+=======
+
+Textbook
+--------
+
+* Foreword
+** History of libavl
+** Motivations for libavl 2.0
+
+* Introduction
+** Audience
+** Reading the Code
+** Code Conventions
+** License
+** About the Author
+** Reporting Bugs
+** Acknowledgements
+** Chapter by Chapter
+** History
+
+* The Table ADT
+** Informal Definition
+** C Interface
+
+* Search Algorithms
+
+* Binary Search Trees
+* AVL Trees
+* Red-Black Trees
+
+* Threaded Trees
+* Threaded AVL Trees
+* Threaded Red-Black Trees
+
+* Right-Threaded Trees
+* Right-Threaded AVL Trees
+* Right-Threaded Red-Black Trees
+
+* Trees with Parent Pointers
+* AVL Trees with Parent Pointers
+* Red-Black Trees with Parent Pointers
+
+* Positional ("Indexed"?) Trees
+* Positional Threaded AVL Trees
+
+* Optimization
+** Do you really want a tree?
+** Benchmarking; choosing a particular tree variant
+** Optimization for Readability and Maintainability
+** Optimization for Speed
+** Optimization for Data Size
+** Optimization for Code Size
+
+* Rope (an example of optimization by specialization)
+* Range Tree (an example of a hybrid structure, see PSPP C++ edition)
+
+* Skip Lists
+* Positional Skip Lists
+
+* 2-3-4 Trees (see Sedgewick, TODO)
+* Splay Trees (see Sedgewick)
+* Randomized Trees (see Sedgewick)
+
+* References
+
+* Supplementary Code
+
+* Glossary
+
+* Answers to All the Exercises
+
+User's Guide and Reference
+--------------------------
+
+* Introduction
+
+* Tables
+** Table functions
+** Simulating dictionaries
+** Simulating duplicate keys
+
+* Trees
+** Binary trees, AVL trees, red-black trees
+** Threaded trees, right-threaded trees, parent pointers
+
+* Table implementations
+** bst
+** avl
+** rb
+** tbst
+** tavl
+** trb
+** rtbst
+** rtavl
+** rtrb
+** pbst
+** pavl
+** prb
+
+* How to pick a table
+*** Do you want a binary tree at all?
+**** Do you want table semantics?
+**** Other data structures
+*** Do you want libavl?
+*** When to "roll your own" rather than using a library?
+
+* Simple example.
+
+* More extensive example: string dictionary.
+

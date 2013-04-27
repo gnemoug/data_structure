@@ -1,0 +1,38 @@
+Thanks to...						-*- text -*-
+                                       
+* Dann Corbit for his invaluable suggestions and corrections during
+  development of libavl 2.0.
+
+* Erik Goodman of MSU's Case Center for making possible for me to
+  receive MSU honors credit for developing libavl 2.0.
+
+* Donald Knuth for _The Art of Computer Programming_, the TeX system
+  for high-quality typesetting, and the WEB system for literate
+  programming.
+
+* Thomas Cormen, Charles Leiserson, and Ron Rivest for _Introduction
+  to Algorithms_.
+
+* Robert Sedgewick for _Algorithms in C_.
+
+* Richard Stallman for the GNU C compiler and GNU Emacs, both heavily
+  used in writing libavl.
+
+* David MacKenzie for writing Autoconf, the automatic configuration
+  tool.
+
+* David MacKenzie and Tom Tromey for writing Automake, the tool for
+  generating `Makefile's.
+
+* The authors of the many data structure libraries from which I have
+  drawn inspiration over the years, and especially the designers of
+  the C++ STL associative containers.
+
+* All those who have contributed bug reports and enhancements.  You
+  can find them listed individually in the NEWS and the ChangeLog.
+
+* All those who gave suggestions during development.  I don't have all
+  of their names, but their contributions are appreciated.
+
+* The regulars of comp.lang.c for much general C programming guidance
+  over the years and even some libavl-specific feedback.

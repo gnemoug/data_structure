@@ -1,0 +1,639 @@
+TODO  -*- text -*-
+----
+
+This file is mostly a set of notes to myself, so if some of the
+following seem pretty terse, that's probably why.
+
+* Is the term "iterator" from STL better than "traverser"?
+
+* Prerelease checklist:
+
+  * All the code is tested.
+
+  * Everything in `make checksrc' checks out.
+
+  * `make check' succeeds.
+
+  * The algorithms catalogue is up-to-date.
+
+  * The glossary is up-to-date.
+
+  * The index is up-to-date.
+
+  * Make sure that none of the alternative function implementations
+    are enabled in *.w.
+
+  x Autoconfiscate, automakeify.
+
+  * README, etc. are up to date.
+
+* Abridged edition.  Needs texiweb to handle @ifset, @ifclear for
+  itself.  Shouldn't be too bad.
+ 
+* A proper index.  Probably two.
+
+* User's guide: make sure it addresses Michael Fischer's issue in
+  message at end of this file.
+
+* Alternative deletion for all 12 table implementations.
+
+* From CLR:
+
+  - Aside: red-black tree joins per CLR problem 14-2.
+
+  - Exercise for BST chapter: exercise 14.2-5.  (Can base the answer
+    on the bst_balance() function concepts.)
+
+  - Exercise 14.3-5 if we haven't already covered it.
+
+  - Ditto for exercises 14.4-1, 14.4-6, 13.3-6.
+
+  - Exercise 13.3-4 might be interesting in the BST chapter as a
+    precursor to TBSTs.
+
+  - Exercise 13.3-7.
+
+* Aside: STL-semantics iterators such that it is no longer necessary
+  to keep track of the tree that the iterator is in.  We will probably
+  want a header node whose "next" is the first node and whose "prev"
+  is the last node.  We could use value semantics for return values
+  and easily do things analogous to pre- and post-inc/decrement as
+  functions.  Of course we'd need an accessor function to get at the
+  actual data in a node.  This would work best for threaded trees (or
+  perhaps trees with parent pointers).
+
+* "Harmonize" binary tree comparison functions in *-test.c.
+
+* Function to construct balanced tree from sorted array.  Alternative:
+  take random permutation of array, insert in order.
+
+* In a positional tree we can split trees in O(h) time.  In other
+  trees it takes O(n) because we have to count the nodes in one of the
+  resulting subtrees.  (We could use lazy counting if we're careful.
+  That's a cool idea.  Might want to add _empty() macro like STL in
+  that case.)
+
+* Aside: insertion with STL-like traverser-based hinting to save time
+
+* Idea for additional aside for rb trees:
+
+  The previous exercise explored the trade-off between correcting rule
+  1 or rule 2 violations after insertion.  But is this trade-off
+  necessary at all?  Explore the possibility of an adaptive algorithm
+  for insertion that can cause and correct either kind of rule
+  violation.  Implement your algorithm.  What are the advantages and
+  disadvantages of such an algorithm?
+
+* Recheck stack height allocations.
+
+* Ideas from Sedgewick's _Algorithms in C_, 3rd ed.:
+
+  - exercises 12.{50,61,62,81-2,83}.
+
+  - kth smallest item (page 520, exercise 12.75).
+
+  - rebalancing using count field (page 531, exercise 13.{1,4,5}).
+
+  - 2-3-4 trees and red-black trees (pages 546-559, exercises
+    13.{53,62,63,65,66}).  Need to rewrite texitree first though to
+    support k-way trees.
+
+  - randomized and self-organizing trees:
+
+    . splay BSTs (page 540).
+
+    . randomized BSTs (page 533).
+
+    . skip lists (page 561)
+
+  - comparison of methods (page 569).
+
+  - Don't forget to add references liberally!
+
+* Add exercise using `more general than' operator from p. 220-221 of
+  _The Deductive Foundations of Computer Programming_?
+
+* Example of nested comparison function.  (Some people don't understand
+  that the comparison function can be complex!)
+
+* Outgrowth of suggestion by Daniel Beer
+  <daniel.beer@student.uni-halle.de>: Add a tbl_t_delete().  Implement
+  something like this:
+
+  void *t_delete (struct traverser *trav) {
+    if (trav->tree->generation != trav->generation) {
+      /* No point in refreshing traverser, it'll just be
+         invalidated by the deletion anyhow. */
+      return bst_delete (trav->tree, trav->node->item);
+    } else {
+      unsigned char pa[MAX_HEIGHT];
+      for (i = 0; i < trav->height - 1; i++)
+        pa[i] = trav->stack[i]->link[1] == trav->stack[i + 1];
+      return internal_delete (trav->tree, trav->node->item,
+                              trav->stack, pa, stack->height);
+    }
+  }
+
+  Not sure if this is a good idea or not though.  It would make a good
+  aside though.
+
+* Deal with wrap-around of generation numbers?
+
+* Section on designing, writing, debugging binary tree routines.
+  Example of debugging a routine in libavl.  The two ways to write
+  binary tree routines.
+
+* Section on performance of tree routines.
+
+  Three-way <, =, > style of libavl versus two-way <, >= of C++ STL:
+  look at the `find' routine in stl_tree.h.
+
+  Dann Corbit's fast binary search.  x86 P3-optimized binary search.
+  Various tree search optimizations given in Knuth.
+
+  Lightweight avl trees in the style of
+  <URL:http://www.fazekas.hu/~nagydani/avl>.
+
+  Analysis of sentinels.  Remove the too-brief `bstsentinel' exercise.
+
+  Reintroduce [t]avl_cache?
+
+  Recursion vs. iteration and optimization.
+
+  Types of optimization: speed, code size, data size.  libavl *is*
+  optimized, it's just that it's optimized for comprehension ;-)
+
+  Do you really want a tree after all?  Trees vs. binary search
+  vs. hashes vs. heaps vs....
+
+  Benchmarking.  Different kinds of usage.
+
+  Why heap-like structuring doesn't work.
+
+  Investigate suggestions from article "Making Pointer-Based Data
+  Structures Cache Conscious" from _Computer_ 33(200):12, 67-74.
+
+  Pool memory allocators.
+
+  Hybrid data structure: start as hash table, then sort.
+
+* Appendix with a fully generic AVL library that can work on any kind
+  of base binary tree structure via function calls that implement,
+  e.g., rotate(node, dir), has_child(side), etc.
+
+* Name change to "searchlib" or some such due to expanding generality?
+  (Dann Corbit's suggestion)
+
+* Additional exercises: AVL deletion recursively; AVL rebalancing
+  using Linux kernel approach (e.g., one update/rebalancing routine
+  that handles both insertion and deletion)
+
+* AVL insertion and deletion updating/rebalancing with shared routine:
+  basically pass it the node (stack) and the side that's too high.
+  (This may be the Linux kernel approach from above, haven't looked in
+  a while.)
+
+* Compare "strict weak ordering" rules to Knuth's "total ordering"
+  rules in Exercise 2.2.3-14.
+
+* Interpolative search: O(log log n) average case, but O(n) worst case
+  for a data set like 1, 2, 3, 4, 5, 6, 7, 8, 9, 1e6.  This can be
+  "fixed" by tripling the number of comparisons, but still fails for
+  1, 2, 3, 4, ..., 1e6, 2e6, 3e6, ...
+
+* In the positional trees, don't forget to compare RANK (Knuth) and
+  SIZE (Cormen et al.) methods, see below.
+
+* Splay trees.
+
+* Practical examples: Rope library (see paper from Software Practice
+  and Experience 25(12), 1315-1330, Dec 1995); string dictionary.
+
+* Other data structures: skip lists, hashes, heaps (esp. "relaxed
+  heaps" as suggested by Dann Corbit); ternary trees
+  (http://www.ddj.com/articles/1998/9804/9804a/9804a.htm?topic=algorithms).
+
+* binary heaps, binomial heaps, Fibonacci heaps, relaxed heaps
+
+* Investigate the algorithm given in _Structure and Interpretation of
+  Computer Programs_ exercise 2.64 for fully balancing a binary tree.
+  Is this the same one we use?  Is it worth discussing anyway?
+
+----------------------------------------------------------------------
+RANK versus SIZE, in the format "rank.size":
+
+                         6.16
+                   __..-'    `---....____
+                  4.5                    5.11
+            __..-'   \           ___..--'    `-..__
+           2.3        1.1       2.4                3.6
+         _'   \               _'   `._           _'   `._
+        1.1    1.1           1.1      2.2       2.2      2.3
+                                    _'        _'       _'   \
+                                   1.1       1.1      1.1    1.1
+
+RANK search for position k:       SIZE search for position k:
+
+assert (k >= 0 && k < count);     assert (k >= 0 && k < count);
+M = k;                            i = k;
+P = root;                         P = root;
+for (;;) {                        for (;;) {
+			       	    r = P->left->size + 1;
+  if (M < P->RANK)        	    if (i < r)
+    P = P->link[0];       	      P = P->link[0];
+  else if (M > P->RANK) { 	    else if (i > r) {
+    M -= P->RANK;         	      P = P->link[1];
+    P = P->link[1];       	      i -= r;
+  }                       	    }
+  else return P->data;    	    else return P->data;
+}                         	  }
+
+----------------------------------------------------------------------
+Desirable functions for an ideal string class:
+
+* Initialize with given amount of space/given string
+
+* Destroy
+
+* Destroy but return malloc()'d copy
+
+* Copy (COW?)/substring copy
+
+* Append: character; C string; string class; buffer; printf; strftime;
+  line from file
+
+* Insert (same things)
+
+* Character/C string at position
+
+* Modifiable substring
+
+* Translate/upcase/downcase/propercase
+
+* String/regex search/replacement; case sensitivity/insensitivity
+
+* Handle strings too large for memory?
+
+* Be sure to examine HP/SGI/GNU STL implementation of ropes before
+  writing anything.  Also the ropes paper mentioned above.
+
+----------------------------------------------------------------------
+From: Akim Demaille <demaille@inf.enst.fr>
+Subject: Re: libavl
+To: pfaffben@pilot.msu.edu
+Date: 25 Sep 1998 16:04:03 +0200
+
+
+Sorry for the delays...
+
+Ben Pfaff <pfaffben@pilot.msu.edu> writes:
+
+> Akim Demaille <demaille@inf.enst.fr> writes:
+>
+>    And finaly, for the application I want to make of libavl, I have
+>    sometimes to merge two avls, say the second into the first, while
+>    specifying, when conflict, whether it is always the first or the
+>    second that wins.
+>
+>    I can easily make this using your api, nevertheless, I wanted to ask
+>    you whether you know none brute-force approaches, or even whether
+>    this kind of features might appear in the future.
+>
+> Knuth describes an elegant algorithm for merging two avls, but it only
+> works if all the values in one of them is smaller than all the values
+> in the other.
+>
+> If you do think of a clever algorithm for doing this, please let me
+> know and I'll incorporate it into the API.
+
+I know none.  but looking on the web, I found one in haskell :)
+I didn't look whether it was smart or not.
+
+http://www.cs.chalmers.se/pub/haskell/library/avl-tree.lgs
+
+There is not much material.  I think comp.compiler is a good place to
+ask for an algorithm...
+
+Akim
+----------------------------------------------------------------------
+From: David Kastrup <dak@neuroinformatik.ruhr-uni-bochum.de>
+Subject: Re: Your AVL tree page
+To: pfaffben@pilot.msu.edu
+Date: Mon, 23 Nov 1998 18:38:55 +0100
+
+   From: Ben Pfaff <pfaffben@pilot.msu.edu>
+   Date: 23 Nov 1998 12:12:31 -0500
+
+   David Kastrup <dak@neuroinformatik.ruhr-uni-bochum.de> writes:
+
+      You might want to take a look at the texts at
+      http://www-lsi.upc.es/www/dept/techreps/1998.html
+
+      In particular the paper
+      http://www-lsi.upc.es/dept/techreps/ps/R98-12.ps.gz
+
+      might be interesting, as it gives an AVL-tree mechanism for
+      multi-threaded, distributed access.
+
+   Thanks for the pointers.  It seems that connectivity to that machine
+   is really slow from here, at least right now, so I'll try to take a
+   look at them a little later.  Currently there is no multithread
+   support in libavl, but it might be nice to add it later.
+
+Well, the reference will probably not be what you think it is.  It is
+intended to not properly balance the tree during the access when that
+would mean locking the entire tree.  Instead, it does only local
+corrections that eventually probagate to the top.  One can also let a
+"garbage collect" thread run that will optimize the data structures
+at idle times, but will let them deteriorate a bit rather than fix
+them up properly under stress.  This is, of course, especially
+interesting for internal data structures of an operating system, where
+full balancing at the time of access will slow operations down, but
+there will be idle times when balancing can occur without overhead.
+
+David Kastrup                                     Phone: +49-234-700-5570
+Email: dak@neuroinformatik.ruhr-uni-bochum.de       Fax: +49-234-709-4209
+Institut für Neuroinformatik, Universitätsstr. 150, 44780 Bochum, Germany
+
+----------------------------------------------------------------------
+
+[Note: these are called "implicit binary trees".]
+
+From: <wuggy@wuggy.co.uk>
+To: Ben Pfaff <pfaffben@msu.edu>
+Date: Tue, 2 Jan 2001 03:02:33 -0000
+Message-ID: <3A5144C9.31142.6F04C7B@localhost>
+
+To:             	<wuggy@wuggy.co.uk>
+Subject:        	Re: Criteria for evaluating binary tree traversers
+Send reply to:  	pfaffben@msu.edu
+From:           	Ben Pfaff <pfaffben@msu.edu>
+Date sent:      	01 Jan 2001 21:03:08 -0500
+
+> <wuggy@wuggy.co.uk> writes:
+>
+> > I'd be very interested in looking at your algo's and reasoning. I've
+> > been working with graphs for a bit and have (informally) gathered
+> > some ideas about graph traversal faster than the normal approaches.
+> > I have no problem saying that i'm pretty much an amatur at bleeding
+> > edge algo creation, but i seem to have a knack for rediscovering
+> > other peoples work.
+>
+> There's nothing really innovative in anything I've built.  The
+> three algorithms are:
+>
+>  1. Recursive traversal.
+>
+>  2. Algorithm 1 factored into iteration (the basic
+>            algorithm for in-order traversal that Knuth
+>            discusses).
+>
+>  3. Algorithm 2 but storing all parent pointers instead of
+>            just ones needed to find the next node (the successor
+>            algorithm discussed in, e.g., Cormen et al.,
+>            _Introduction to Algorithms_).
+
+There is a possible fourth... but how feasible it is in reallity I have
+no idea. It is based on something I was playing around with graphs
+whilst I was experimenting with different ways of representing them.
+It's not a fully formed or fully explored idea, but the re-application
+from graphs to balanced tree seems to have made it better!
+
+Consider a 'full' balanced tree of a fixed height. When you traverse
+a tree of height 2 you get this:
+
+    a
+  b   c      ---> b, a, c
+
+Take a bigger one of height 4... you get
+
+     a
+  b    c
+d  e f  g    ----> d, b, e, a, c, f, g
+
+I'm sure this is pretty familiar ;) Here's the twist....
+
+Instead of storing the tree as malloc'ed nodes with 'left' and right
+vertices, (or as well as), have a list of vertices on each level in
+order... eg..
+
+a
+b c
+d e f g
+h i j k l m n o p
+
+Now... the traversal sequence we know.... the interesting thing is
+that it happens in a very predictable, regular (and probably
+calculable pattern).
+
+h, d, i, b, j, e, k, a, l, f, m, c, n, g, o
+
+in terms of height (from bottom to top for simplicity), moving from
+left to right this is:
+
+0 1 0 2 0 1 0 3 0 1 0 2 0 1 0 4 0 1 0 2 0 1 0 3 0 1 0 2 0 1 0
+
+For a human to follow, this is a very simple pattern. (It might be
+best to draw this thing out on paper.) I have yet to analyse it to
+work out how to compute this sequence, but it'll probably be a
+bitwise operation on an index (the recurruring 0 is a bit of a give
+away!). It isn't particularly obvious, but if you write down the level
+number (going from the bottom up, starting at 0) next to the binary
+value of a counter (starting at 0), the level number seems to be the
+number of consecutive 1's in the counter starting at the LSB. I'm
+not sure though - I've only tried it up to 4.
+
+What you might be able to do with this is remove the
+iteration/recursion from the entire operation and perform it in a
+linear fashion because we already know the order.
+
+Of course, you'll need to follow the steps whether or not there is a
+vertex in that location, and just carry on if there isn't a vertex there.
+
+The problem is that this needs the tree to be stored differently than
+normal to be effective. It really needs to have each level to be
+stored in order in an array and 'left/right' connections being dealt
+with numerically based on index, or to have a pointer in each vertex
+to the next vertex along that level. Neither of which are really
+desirable.
+
+One possible structure for which this would be effective (and
+possibly the most efficient structure possible for storing a balanced
+tree) would be to have two different kinds of storage depending on
+the row.
+
+I'd expect only the bottom most level to be sparsely populated in a
+balanced tree (<50%). This can be represented using a linked list
+of nodes holding horizontal position and a pointer to the data. All
+other rows can be a linearly allocated buffer holding 2^level pointers
+to data.
+
+Left/right connectedness is simply done using indices in the arrays
+at the various levels. The bottommost level remains efficient until
+half of the places are filled, but working with it might be a pain. If
+you have the memory available it'd much better to just allocate it
+linearly and be done with it... but of course... you potentially waste
+a lot of memory.
+
+Well.. that sums up my musings to this point. As usual, they're
+potentially useful for have some nasty set backs hidden in there.
+
+> I like to think that I do a good job of implementing and
+> explaining it, though.
+
+> > At worst, I'll learn something (which is never a bad thing) and that
+> > would be all. At best I might stumble across an interesting idea
+> > that might help you along or give a different perspective. I'm going
+> > to take a look at the version on your site and see if I can spot
+> > anything there once I have a little free time.
+>
+> Algorithms 1 and 2 are in the version currently on the site.  The code
+> for algorithm 3 is currently being cleaned up for the next version.
+>
+> > Good look on the writing!
+>
+> Thanks.
+>
+> It's good to talk to you, BTW.  You're one of the C Unleashed
+> co-authors I've never really spoken to.
+
+Yep. My only interaction has really been with Richard, though I've
+pretty much seen everyone on clc in one form or another. I'm not
+exactly the most conspicuous of the 'et al' group, but a quiet life
+does have some benefits!
+
+Ian Woods
+
+----------------------------------------------------------------------
+
+From nobody Wed Feb 14 16:21:23 2001
+Path: msunews!hammer.uoregon.edu!feed.textport.net!newsfeed.stanford.edu!news-spur1.maxwell.syr.edu!news.maxwell.syr.edu!howland.erols.net!portc.blue.aol.com.MISMATCH!portc01.blue.aol.com!peerfeed.news.psi.net!filter.news.psi.net!reader.dist.news.psi.net!client!not-for-mail
+From: "Dann Corbit" <dcorbit@solutionsiq.com>
+Newsgroups: comp.programming,comp.lang.c,alt.comp.lang.learn.c-c++
+References: <3A8AC298.843A86DE@hotmail.com>
+Subject: Re: Count leaves in a binary tree?
+Lines: 13
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="Windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Newsreader: Microsoft Outlook Express 5.50.4133.2400
+X-MimeOLE: Produced By Microsoft MimeOLE V5.50.4133.2400
+Message-ID: <WwAi6.18$nG5.234@client>
+Date: Wed, 14 Feb 2001 10:55:18 -0800
+NNTP-Posting-Host: 38.168.214.233
+X-Trace: client 982176950 38.168.214.233 (Wed, 14 Feb 2001 13:55:50 EST)
+NNTP-Posting-Date: Wed, 14 Feb 2001 13:55:50 EST
+Xref: msunews comp.programming:128425 comp.lang.c:516417
+
+You really want comp.programming only.
+
+Look at Ben Pfaff's book on the subject:
+http://www.msu.edu/user/pfaffben/avl/
+and get the development version.  It is the very best reference on trees that
+I have ever seen, and I am including Knuth, Sedgewick and Weiss in that
+consideration.
+--
+C-FAQ: http://www.eskimo.com/~scs/C-faq/top.html
+ "The C-FAQ Book" ISBN 0-201-84519-9
+C.A.P. FAQ: ftp://cap.connx.com/pub/Chess%20Analysis%20Project%20FAQ.htm
+
+----------------------------------------------------------------------
+
+To: Michael Fischer <michael@visv.net>
+Subject: Re: (void *)libavl
+From: Ben Pfaff <pfaffben@msu.edu>
+Date: 25 Apr 2001 01:27:55 -0400
+In-Reply-To: Michael Fischer's message of "Wed, 25 Apr 2001 01:06:09 -0400"
+
+Michael Fischer <michael@visv.net> writes:
+
+> Been reading the most recent libavl and C Unleased.
+> Both wonderful. Thank you!
+
+Thanks for the compliments.
+
+> But a question crops up. I would post it to c.l.c,
+> but your 'literate' version of libavl most directly
+> addresses my question, in an actuall exercise/answer,
+> so I thought I'd toss it to you first. 
+
+Okay.  Yes, I'm happy to answer libavl questions via email.  I've
+received valuable suggestions and bug reports this way.
+
+> In section 3.2.2, you introduce the use of void *
+> for a data member of a node in a bst. You follow
+> with an exercise question concerning the advisability
+> of casting ints ( I suppose this applies to floating
+> point types as well??? ) to void *.
+
+This does apply to floating point types.  There's the small
+difference that all-bits-zero might not be 0 as a floating point
+value, but I think that in fact it is with x86 and other common
+chips.
+
+> Well, ok. I am currently writing myself a data structures
+> library, both for self-education and personal 'production'
+> use. The issue of casting ( int || float ) to void *
+> is hanging me. gcc on Linux lets me do this, and in fact,
+> complains if I don't ( though it will 'do what I mean' ).
+> Assignment within the 'list_insert' function itself, without
+> casting going in, results in a diagnostic too, of course.
+> 
+> Passing the function the address of the int merely makes
+> the node have the value of the address and not the int itself.
+> 
+> So, while I have your explanation of _why_ this is not
+> good in the answers to the exercises, I do not know what
+> is the Right Thing to do. 
+> 
+> How _should_ an int be put into a node ( tree, list, whatever )
+> when that field is void *? On a related note, how much
+> can the library writer do to relieve the user-programmer
+> from the need to cast? Casts going into the data structure,
+> and coming out ( say, for printing ).
+
+You really have three options if you're faced with this
+situation:
+
+	* Use the cast.  Make sure you don't ever put zero into
+          it.  You can get away with this in real life if you
+          only use "normal" machines like x86, Alpha, Sparc, ...
+          (You couldn't get away with it on comp.lang.c.)  Make
+          sure that you don't try to cast a type with sizeof
+          (type) > sizeof (void *), though.  (Note that typically
+          sizeof (double) > sizeof (void *).)
+
+	* If you'll only want trees of floats, you can basically
+          do a search-and-replace throughout libavl, replacing
+          void * by float (or double, or whatever).  I should
+          probably make the item type a typedef, come to think of
+          it, to make this easier.
+
+	* Take the address of the float and pass it into the
+          libavl functions instead.  If you look into the test
+          program for the avl routines, then you'll see that this
+          is the technique used there for the ints that it
+          inserts.  (You might have to use dynamic allocation of
+          these items depending on how you do it.)
+
+BTW I'm planning to have an appendix on "How to use libavl in
+your programs" in the finished book.
+
+> I attach a small sample file.
+
+Didn't see it.  Feel free to pass it on if you still think it's
+necessary.
+
+> Thanks for any help, suggestions, and best of luck with the
+> fencing ( PSU varsity, '85 - '89 ).
+
+Thanks!  The season's over now, but I'll be entering Stanford for
+grad school in fall and hope to join their club.
+-- 
+"Unix... is not so much a product
+ as it is a painstakingly compiled oral history
+ of the hacker subculture."
+--Neal Stephenson

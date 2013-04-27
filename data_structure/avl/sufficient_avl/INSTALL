@@ -1,0 +1,182 @@
+Installing libavl				-*- text -*-
+=================
+
+libavl is not intended to be installed as a shared library.  Instead,
+its source files are meant to be included in programs directly.  A
+given program normally uses only one or two of libavl's tree
+structures.  Only the C source and header files for those structures
+need to be included.  Refer to the libavl manual for more information.
+
+As a result, there is no real "installation procedure" for libavl.  If
+you like, you can install the test and demo programs in a convenient
+location, but it hard to imagine a practical use for them other than
+as tests and demonstrations.
+
+Hence, this file gives information on what the libavl distribution
+includes and how to build it.  It does not furnish an actual
+installation procedure.
+
+What's here
+-----------
+
+Before we get started, here's what the source distribution of libavl
+includes:
+
+* Meta-documentation
+
+	- AUTHORS: lists libavl's authors.
+	- COPYING: the GNU General Public License, libavl's license.
+	- ChangeLog: log of changes from old versions of libavl
+	- INSTALL: this file
+	- NEWS: summary of changes between libavl versions
+	- OUTLINE: outline of libavl manual
+	- README: instructions for getting started
+	- ROADMAP: tentative plans for future libavl releases
+	- THANKS: acknowledgements of contributors to libavl
+	- TODO: incomplete list of remaining libavl tasks
+
+* Software
+
+  libavl library (generated from .w files):
+	- bst.c, bst.h: Binary search tree library.
+	- avl.c, avl.h: AVL tree library.
+	- rb.c, rb.h: Red-black tree library.
+	- tbst.c, tbst.h: Threaded binary search tree library.
+	- tavl.c, tavl.h: Threaded AVL tree library.
+	- trb.c: Threaded red-black tree library.
+	- rtbst.c, rtbst.h: Right-threaded binary search tree library.
+	- rtavl.c, rtavl.h: Right-threaded AVL tree library.
+	- rtrb.c, rtrb.h: Right-threaded red-black tree library.
+	- pbst.c, pbst.h: Binary search tree with parent pointers library.
+	- pavl.c, pavl.h: AVL tree with parent pointers library.
+	- prb.c, prb.h: Red-black tree with parent pointers library.
+
+  Test programs (generated from .w files):
+	- bst-test.c: Test for bst.c.
+	- avl-test.c: Test for avl.c.
+	- rb-test.c: Test for rb.c.
+	- tbst-test.c: Test for tbst.c.
+	- tavl-test.c: Test for tavl.c.
+	- trb-test.c: Test for trb.c.
+	- rtbst-test.c: Test for rtbst.c.
+	- rtavl-test.c: Test for rtavl.c.
+	- rtrb-test.c: Test for rtrb.c.
+	- pbst-test.c: Test for pbst.c.
+	- pavl-test.c: Test for pavl.c.
+	- prb-test.c: Test for prb.c.
+
+	- bin-ary-test.c: Test for binary search in arrays.
+	- bsts.c: Test for binary search with sentinel.
+	- seq-test.c: Basic test for sequential search.
+	- srch-test.c: Comprehensive test for search within array.
+	- test.c, test.h: Generic library for testing.
+
+  Preprocessors:
+	- slr.c: SLR parser-generator used to produce part of texiweb.c.
+	- texiweb.c: translates TexiWEB to C and Texinfo.
+	- texitree.c: translates tree descriptions to PostScript and text.
+	- eps2png: script that uses GhostScript to translate .eps to .png
+
+* Documentation
+
+  Compiled:
+	- libavl.info*: Documentation in Info format.
+
+  Available (not distributed, but you can make them yourself; see below):
+	- libavl.dvi: Documentation in DVI format.
+	- libavl.ps: Documentation in PostScript format.
+	- libavl.pdf: Documentation in PDF.
+	- libavl.text: Documentation in plain text format.
+	- libavl.html: Documentation in HTML format.
+
+  Source:
+	- libavl.w: Top-level TexiWEB source for libavl.
+	- preface.w: Source for preface.
+	- intro.w: Source for introduction.
+	- table.w: Source for table ADT chapter.
+	- search-alg.w: Source for search algorithms chapter.
+	- bst.w: Source for binary search trees chapter.
+	- avl.w: Source for AVL trees chapter.
+	- rb.w: Source for red-black trees chapter.
+	- tbst.w: Source for threaded binary search trees chapter.
+	- tavl.w: Source for threaded AVL trees chapter.
+	- trb.w: Source for threaded red-black trees chapter.
+	- rtbst.w: Source for right-threaded binary search trees chapter.
+	- rtavl.w: Source for right-threaded AVL trees chapter.
+	- rtrb.w: Sources for right-threaded red-black trees chapter.
+	- pbst.w: Sources for binary search trees with parent pointers chapter.
+	- pavl.w: Sources for AVL trees with parent pointers chapter.
+	- prb.w: Sources for red-black trees with parent pointers chapter.
+	- references.w: Sources for references appendix.
+	- glossary.w: Source for glossary appendix.
+	- catalogue.w: Source for catalogue of algorithms appendix.
+	- *.tree: Binary tree figures in `texitree' source form.
+	- *.png: Binary tree figures as bitmap graphics.
+	- *.pdf: Binary tree figures in PDF format.
+	- *.eps: Binary tree figures (generated, not distributed).
+	- *.txt: Binary tree figures (generated, not distributed).
+	- texinfo.tex: TeX macros for Texinfo.
+
+Prerequisites
+-------------
+
+You need the following software to fully build this version of libavl:
+
+	* GNU make (ftp://ftp.gnu.org/pub/gnu/make).
+
+	  Other make programs will not work.
+
+	* TeX (http://www.tug.org).
+
+	  You should install "e-TeX" extended TeX if possible, but
+	  Knuth's TeX will also work, albeit more slowly.  You may
+	  need to increase the pool size for your copy of TeX.  This
+	  can sometimes be done by editing a file named texmf.cnf in
+	  TeX's configuration directory.  Values of at least 250000
+	  are known to work.
+
+	* dvips.
+
+	  dvips, often distributed with TeX, is needed to build a
+	  PostScript version of the libavl manual.
+
+	* GNU makeinfo (ftp://ftp.gnu.org/pub/gnu/texinfo).
+
+	  makeinfo is needed to build text, Info, and HTML versions of
+	  the libavl manual.  Version 4.1 or later is required to
+	  build the HTML version of the manual, but version 4.8 is
+	  recommended, and this version or later is recommended in any
+	  case.
+
+	* GNU Ghostscript (ftp://ftp.gnu.org/pub/gnu/ghostscript) and
+	  Imagemagick (http://www.imagemagick.org/).
+
+	  You should only need these tools if you modify the .tree
+	  files in the source distribution and want to build a custom
+	  HTML or PDF version of libavl.  Ghostscript is used to render
+	  PostScript to oversized PNGs and Imagemagick does
+	  antialiased scaling to reasonable sizes.  Ghostscript is
+	  also used in the process of converting PostScript to PDF
+	  format.
+	  
+Building
+--------
+
+You can build all of libavl or just one part.  Here are the commands
+to build a few interesting subsets:
+
+	* Everything: `make'.
+
+	* All versions of the manual: `make docs'.
+
+	  - Manual in DVI format: `make libavl.dvi'.
+	  - Manual in PostScript format: `make libavl.ps'.
+	  - Manual in PDF format: `make libavl.pdf'.
+	  - Manual in Info format: `make libavl.info'.
+	  - Manual in plain text format: `make libavl.text'.
+	  - Manual in HTML format: `make libavl.html'.
+
+	* All the test and demo programs: `make programs'.
+
+For a fairly comprehensive battery of tests, run `make check'.	This
+may take several minutes.

@@ -1,0 +1,428 @@
+#! /usr/bin/env perl
+
+use strict;
+use warnings;
+
+our ($srcdir) = $ARGV[0];
+our ($dstdir) = $ARGV[1];
+our ($imgdir) = $ARGV[2];
+
+our (@srcfiles) = map (/^$srcdir\/(.*)/, glob ("$srcdir/*.html"));
+
+our (%fntoindex, %filetocfrag, @nodes);
+parse_index ();
+
+our (%headnode, %refresh);
+parse_nodes ();
+
+sub parse_index {
+    my ($toc, $level, $nextfrag);
+    open (INDEX, "$srcdir/index.html") || die;
+    while (<INDEX>) {
+	chomp;
+	$toc = 1, $level = 0, next if m%^<h2>Table of Contents</h2>$%;
+	$level++, next if $toc && /^<ul>$/;
+	if ($toc && m%</ul>$%) {
+	    $level--;
+	    $toc = 0 if $level == 0;
+	    next;
+	}
+	next if !$toc;
+
+	if (my ($file, $frag, $title)
+	    = m%<a (?:name=\"[^\"]+\"\s+)?href=\"([^\"\#]*)(\#[^\"]*)?\">(.*)</a>%) {
+	    if (!defined ($fntoindex{$file})) {
+		push (@nodes, "$level\0$file\0$title");
+		$fntoindex{$file} = $#nodes;
+		if (defined ($nextfrag)) {
+		    $filetocfrag{$file} = $nextfrag;
+		    undef $nextfrag;
+		}
+	    }
+	} elsif (my ($name) = m%<a name=\"([^\"]*)\">%) {
+	    $nextfrag = $name;
+	}
+    }
+    close (INDEX);
+}
+
+sub parse_nodes {
+    for my $srcfn (@srcfiles) {
+	open (SRC, "<$srcdir/$srcfn") || die;
+	while (<SRC>) {
+	    if (my ($node) = /^(?:Node:)?<a name=\"([^\"]*)\">([^<]*)</) {
+		$headnode{$srcfn} = $node;
+		last;
+	    } elsif (my ($target) = /^<meta http-equiv=\"refresh\" content=\"0; url=([^\"]*)\">/) {
+		# This compensates for an apparent Texinfo 4.8 bug.
+		$target =~ s/#(\d+)/#g_t$1/;
+
+		$refresh{$srcfn} = $target;
+		last;
+	    }
+	}
+	close (SRC);
+    }
+}
+
+sub fixnode {
+    my ($file, $frag) = @_;
+
+    ($file, $frag) = ($refresh{$file} =~ /(.*)\#(.*)/)
+	if defined ($refresh{$file});
+
+    my ($href);
+    if (defined ($headnode{$file}) && $headnode{$file} eq $frag) {
+	$href = $file;
+    } else {
+	$href = "$file#$frag";
+    }
+    return "href=\"$href\"";
+}
+
+sub getnodeindex {
+    my ($index) = @_;
+    return split(/\0/, $nodes[$index]);
+}
+
+sub getskipback {
+    my ($index) = @_;
+    my ($level) = (getnodeindex($index))[0];
+    while ($index-- > 0) {
+	my ($plevel, $pfile, $ptitle) = getnodeindex($index);
+	return ($pfile, $ptitle) if $plevel == $level;
+	return undef if $plevel < $level;
+    }
+    return undef;
+}
+
+sub getskipfwd {
+    my ($index) = @_;
+    my ($level) = (getnodeindex($index))[0];
+    while ($index++ < $#nodes) {
+	my ($nlevel, $nfile, $ntitle) = getnodeindex($index);
+	return ($nfile, $ntitle) if $nlevel == $level;
+	return undef if $nlevel < $level;
+    }
+    return undef;
+}
+
+sub getprev {
+    my ($index) = @_;
+    if ($index > 0) {
+	my ($plevel, $pfile, $ptitle) = getnodeindex($index - 1);
+	return ($pfile, $ptitle);
+    } else {
+	return undef;
+    }
+}
+
+sub getnext {
+    my ($index) = @_;
+    if ($index < $#nodes) {
+	my ($nlevel, $nfile, $ntitle) = getnodeindex($index + 1);
+	return ($nfile, $ntitle);
+    } else {
+	return undef;
+    }
+}
+
+sub getup {
+    my ($index) = @_;
+    my ($level, $file, $title) = getnodeindex($index);
+    my ($i) = $index - 1;
+    for (;;) {
+	last if $i < 0;
+
+	my ($ulevel, $ufile, $utitle) = getnodeindex($i);
+	if ($ulevel == $level - 1) {
+	    return ($ufile, $utitle);
+	    last;
+	}
+
+	$i--;
+    }
+
+    my ($frag) = $filetocfrag{$file};
+    if (defined ($frag)) {
+	$frag = "#$frag";
+    } else {
+	$frag = "";
+    }
+    return ("index.html$frag", "Table of Contents") if ($i < 0);
+}
+
+sub linkimg {
+    my ($full, $tag, $png) = @_;
+    my ($txt) = $png;
+    $txt =~ s/\.png$/.txt/;
+
+    (-e "$dstdir/$png") or link_or_cp ("$imgdir/$png", "$dstdir/$png");
+    return $full if ! -e "$imgdir/$txt";
+
+    (-e "$dstdir/$txt") or link_or_cp ("$imgdir/$txt", "$dstdir/$txt");
+
+    #print "$full, $tag, $png, $txt\n";
+    #print "<a href=\"$txt\"><img border=0 src=\"$png\" alt=\"[Click here for plain-text rendering]\"></a>";
+    return "<a href=\"$txt\"><img border=0 src=\"$png\" alt=\"[Click here for plain-text rendering]\"></a>";
+}
+
+for my $d (@srcfiles) {
+    next if defined ($refresh{$d});
+
+    my ($div) = 0;
+    my ($saw_div) = 0;
+    my ($body) = 0;
+    my ($sawtitle) = 0;
+    my ($sawmeta) = 0;
+    my ($toc) = 0;
+
+    open (SRC, "<$srcdir/$d") || die;
+    my (@srclines) = <SRC>;
+    close (SRC);
+
+    open (DST, ">$dstdir/$d") || die;
+    my ($index) = $fntoindex{$d};
+    die "$d" if !defined ($index);
+
+    for (my ($srcln) = 0; $srcln <= $#srclines; $srcln++) {
+	$_ = $srclines[$srcln];
+	
+	chomp;
+
+	s%<br><pre>%<pre>%g;
+	s%<pre>%<pre style="margin-left: 1em;">%g;
+	s%(<img (src=\"([^\"]*)\"[^>]*)>)%linkimg($1,$2,$3)%eg;
+
+	if (/^<small>(This code|See also)/) {
+	    $_ = "<div style=\"margin-left: 1em;\">$_</div>";
+	}
+
+	if (/^<ul>$/ && $srclines[$srcln + 1] =~ /^<li>.*:\s*$/) {
+	    my ($hadleader) = 0;
+	    my ($level) = (getnodeindex($index))[0];
+	    my ($listlevel) = $level;
+	    my ($nindex) = $index;
+	    while (my ($nlevel, $nfile, $ntitle) = getnodeindex (++$nindex)) {
+		last if ($nlevel <= $level);
+		if (!$hadleader++) {
+		    my ($parts);
+		    if ($level == 0) { $parts = "Chapters"; }
+		    elsif ($level == 1) { $parts = "Sections"; }
+		    elsif ($level == 2) { $parts = "Subsections"; }
+		    else { $parts = "Subsubsections"; }
+		    print DST "<p><b>$parts:</b></p>\n";
+		}
+		(print DST "<ul>\n"), $listlevel++ while ($listlevel < $nlevel);
+		(print DST "</ul>\n"), $listlevel-- while ($listlevel > $nlevel);
+		print DST "<li><a href=\"$nfile\">$ntitle</a>\n";
+	    }
+	    while (!($srclines[++$srcln] =~ m%</ul>%)) {
+		# Nothing.
+	    }
+	    (print DST "</ul>\n"), $listlevel-- while ($listlevel > $level);
+	    
+	    next;
+	}
+
+	if (/^<meta name/) {
+	    if (!$sawmeta) {
+		print DST "<meta name=author content=\"Ben Pfaff\">\n";
+		print DST "<meta name=generator content=\"makeinfo --html augmented by htmlpp\">\n";
+		print DST "<link rel=Start href=\"index.html\" title=\"Table of Contents\">\n";
+		print DST "<link rel=Contents href=\"index.html\" title=\"Table of Contents\">\n";
+		print DST "<link rel=Index href=\"Index.html\" title=\"Index\">\n";
+		print DST "<link rel=Glossary href=\"Glossary.html\" title=\"Glossary\">\n";
+		print DST "<link rel=Copyright href=\"http://www.gnu.org/copyleft/gpl.html\" title=\"License\">\n";
+
+		for my $i (0...$#nodes) {
+		    my ($level, $file, $title) = getnodeindex ($i);
+		    $title =~ s/<[^>]*>//g;
+		    if ($level == 1) {
+			my ($type);
+			if ($title =~ s/^Appendix //) {
+			    $type = 'Appendix';
+			} else {
+			    $type = 'Chapter';
+			}
+			print DST "<link rel=$type href=\"$file\" title=\"$title\">\n";
+		    }
+		}
+
+		my ($phref, $ptitle) = getprev($index) if defined ($index);
+		print DST "<link rel=Prev href=\"$phref\" title=\"$ptitle\">\n"
+		    if defined ($phref);
+
+		my ($nhref, $ntitle) = getnext($index) if defined ($index);
+		print DST "<link rel=Next href=\"$nhref\" title=\"$ntitle\">\n"
+		    if defined ($nhref);
+
+		my ($uhref, $utitle) = getup($index) if defined ($index);
+		print DST "<link rel=Parent href=\"$uhref\" title=\"$utitle\">\n"
+		    if defined ($uhref);
+	    }
+	    $sawmeta = 1;
+	    next;
+	}
+	/^<link/ && next;
+
+	s/href=\"([^\"\#]*)\#([^\"\#]*)\"/fixnode($1,$2)/ge;
+
+	$toc = 1 if $d eq 'index.html' && m%^<h2>Table of Contents</h2>$%;
+	if ($toc && m%<a href=\"([^\"]*)\">%) {
+	    $_ = "$`<a name=\"$1\" href=\"$1\">$'";
+	}
+
+	if (/^<body>$/) {
+	    print DST "<body bgcolor=\"#ffffff\" text=\"#000000\" link=\"#1f00ff\" alink=\"#ff0000\" vlink=\"#9900dd\">\n";
+
+	    $body = 1;
+	    next;
+	} elsif ($body) {
+	    $body = 0;
+	    /^<p>$/ && next;
+	}
+
+	if ((my ($title) = m%^<h\d[^>]*>([^<]*)</h\d>%)
+	    && !$sawtitle && defined ($index)) {
+	    $sawtitle = 1;
+	    print DST "<table bgcolor=\"#d0d0d0\" cellpadding=0 width=\"100%\"><tr>\n";
+	    print DST "<td align=left><big><b>$title</b></big></td>\n";
+	    print DST "<td align=right>\n";
+
+	    my ($tochref) = "index.html#$d";
+	    print DST "<a href=\"$tochref\" title=\"Table of Contents\"><img src=\"toc.png\" border=0 alt=\"[ToC]\"></a>\n";
+	    print DST "<a href=\"Index.html\" title=\"Index\"><img src=\"index.png\" border=0 alt=\"[Index]\"></a>\n";
+	    print DST "&nbsp;&nbsp;&nbsp;\n";
+
+	    my ($sbhref, $sbtitle) = getskipback($index);
+	    my ($phref, $ptitle) = getprev($index);
+	    my ($uhref, $utitle) = getup($index);
+	    my ($nhref, $ntitle) = getnext($index);
+	    my ($sfhref, $sftitle) = getskipfwd($index);
+
+	    my ($skip) = 0;
+	    if (defined ($sbhref)) { # && $sbhref ne $phref) {
+		print DST "<a href=\"$sbhref\" title=\"Skip Back: $sbtitle\"><img src=\"skipback.png\" border=0 alt=\"[Skip Back]\"></a>\n";
+		$skip++;
+	    } else {
+		print DST "<img src=\"padding.png\">\n";
+	    }
+	    
+	    if (defined ($sfhref)) { # && $sfhref ne $nhref) {
+		print DST "<a href=\"$sfhref\" title=\"Skip Forward: $sftitle\"><img src=\"skipfwd.png\" border=0 alt=\"[Skip Fwd]\"></a>\n";
+		$skip++;
+	    } else {
+		print DST "<img src=\"padding.png\">\n";
+	    }
+	    
+	    print DST "&nbsp;&nbsp;&nbsp;\n";
+
+	    if (defined ($phref)) {
+		print DST "<a href=\"$phref\" title=\"Prev: $ptitle\"><img src=\"prev.png\" border=0 alt=\"[Prev]\"></a>\n";
+	    } else {
+		print DST "<img src=\"padding.png\">\n";
+	    }
+
+	    if (defined ($uhref)) {
+		print DST "<a href=\"$uhref\" title=\"Up: $utitle\"><img src=\"up.png\" border=0 alt=\"[Up]\"></a>\n"
+		} else {
+		    print DST "<img src=\"padding.png\">\n";
+		}
+	    
+	    if (defined ($nhref)) {
+		print DST "<a href=\"$nhref\" title=\"Next: $ntitle\"><img src=\"next.png\" border=0 alt=\"[Next]\"></a>\n"
+		} else {
+		    print DST "<img src=\"padding.png\">\n";
+		}
+
+	    print DST "</td></tr></table>\n";
+	    next;
+	}
+
+	if (m%^</body>% && defined ($index)) {
+	    print DST "</p>\n";
+	    print DST "<table bgcolor=\"#d0d0d0\" cellpadding=0 width=\"100%\"><tr valign=middle>\n";
+	    my ($phref, $ptitle) = getprev($index);
+	    print DST "<td align=left width=\"33%\">\n";
+	    if (defined $phref) {
+		print DST "<a href=\"$phref\"><img src=\"prev.png\" border=0 alt=\"Prev:\" align=middle></a>\n";
+		print DST "$ptitle\n";
+	    }
+	    print DST "</td>\n";
+
+	    my ($uhref, $utitle) = getup($index);
+	    print DST "<td align=center width=\"33%\">\n";
+	    if (defined $uhref) {
+		print DST "<a href=\"$uhref\"><img src=\"up.png\" border=0 alt=\"Up:\" align=middle></a>\n";
+		print DST "$utitle\n";
+	    }
+	    print DST "</td>\n";
+
+	    my ($nhref, $ntitle) = getnext($index);
+	    print DST "<td align=right width=\"33%\">\n";
+	    if (defined $nhref) {
+		print DST "$ntitle\n";
+		print DST "<a href=\"$nhref\"><img src=\"next.png\" border=0 alt=\"Next\" align=middle></a>\n";
+	    }
+	    print DST "</td>\n";
+	    print DST "</tr></table>\n";
+	}
+
+	if ((my ($title) = /<p>(.*):$/)
+	    && (my ($href, $frag, $entry) = $srclines[$srcln + 1] =~ m%<a href=\"([^\"\#]*)\#([^\"]*)\">(catalogue-entry-.*)</a>$%)) {
+	    my ($realhref) = fixnode ($href, $frag);
+	    print DST "<a $realhref>$title</a><br>\n";
+	    $srcln += 2;
+	    next;
+	}
+
+	if (/^<div class=\"node\">$/ && !$saw_div) {
+	    $saw_div = 1;
+	    $div = 1;
+	    next;
+	} elsif ($div) {
+	    print "$_\n" if /^<a name=\"([^\"]*)\"><\/a>$</;
+	    $div = 0 if /^<\/div>$/;
+	    next;
+	}
+
+	if (my ($leader, $file, $piece, $name, $html_node, $first_piece, $op)
+	    = /^(.*)<!-- HTMLPP: file='(.*)' -->(\d+)\. \&lt;<a name="([^"]+)"><\/a>(.*) (\d+)\&gt; (\+?=)\s*$/) {
+	    die "$srcdir/$file: does not exist (run `texiweb --segments')\n"
+		if ! -e "$srcdir/$file";
+
+	    # Add a .txt extension because a lot of browsers insist on
+	    # trying to invoke an external plug-in for text/x-csrc.
+	    link_or_cp ("$srcdir/$file", "$dstdir/$file.txt");
+
+	    my ($name_atr) = "name=\"$name\"";
+	    my ($href) = "href=\"$file.txt\"";
+	    $_ = "$leader<a $href>$piece</a>. "
+		. "&lt;<a $name_atr $href>$html_node $first_piece</a>&gt; $op";
+	}
+
+	die "$srcdir/$d: unparsed HTMLPP:\n$_\n" if /<!-- HTMLPP:/;
+
+	print DST "$_\n";
+    }
+    close (DST);
+    close (SRC);
+}
+
+for my $srcfn ("toc", "index", "padding", "skipback", "skipfwd", "prev", "up", "next") {
+    link_or_cp ("$imgdir/$srcfn.png", "$dstdir/$srcfn.png");
+}
+
+sub link_or_cp {
+    my ($src, $dst) = @_;
+    if (!link ($src, $dst)) {
+	open (S, "<$src") || die "$src: open: $!\n";
+	open (D, "<$dst") || die "$dst: create: $!\n";
+	my ($s);
+	sysread (S, $s, -s $src);
+	syswrite (D, $s);
+	close (D);
+	close (S);
+    }
+}

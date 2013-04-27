@@ -1,0 +1,553 @@
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	* htmlpp: Compensate for apparent Texinfo 4.8 bug in emitting HTTP
+	redirects.  Recognize <div class="node"> element emitted by
+	Texinfo 4.8.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	* Makefile: Distribute only specific files, not every file in the
+	directory.  Necessary to avoid distributing version-control system
+	files.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	* avlex5.eps: Remove unused file.
+	
+	* avlex5.png: Ditto.
+
+	* avlex5.txt: Ditto.
+	
+	* avlex6.eps: Remove unused file.
+
+	* avlex6.png: Ditto.
+	
+	* avlex6.txt: Ditto.
+	
+	* pavlins.eps: Ditto.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	* Makefile: Use pdftex instead of dvipdfm.  Use epstopdf to
+	convert eps files to PDF format.  This fixes mysterious
+	mis-placement of images in output produced by dvipdfm.
+	
+	* epstopdf: New file.
+
+	* libavl.w: Add @finalout to fix black blotch on cover page.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	Fix incompatibility with recent Texinfo.
+	* INSTALL: Recommend Texinfo 4.8.
+	* libavl.w: Don't define macro named @comma, as recent Texinfo has
+	a command by that name already.
+	* avl.w: Always write @comma{} instead of @comma, to make makeinfo
+	happy.
+	* rb.w: Ditto.
+	* texinfo.c (open_header_file): Redefine the Texinfo @tab command,
+	because Texinfo 4.8 allows it only inside @multitable, and we want
+	to use it elsewhere.
+	* htmlpp: Increase generality of a regular expression match, so
+	that it works with the latest "makeinfo --html" output.
+
+	* README: Use bug-avl@gnu.org as bug-reporting address.
+	* ROADMAP: Ditto.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	* COPYING: Replace by GPLv3.
+	* COPYING.LIB: Replace by LGPLv3.
+	
+	* afm2c: Update to GPLv3.
+	* check-table: Ditto.
+	* cover.eps: Ditto.
+	* eps2png: Ditto.
+	* slr.c: Ditto.
+	* texitree.c: Ditto.
+	* texiweb.c: Ditto.
+
+	* intro.w: Update libraries to LGPLv3, programs to GPLv3.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c (gettext): Fix GCC warning.
+	(_): Ditto.
+	(N_): Ditto.
+
+2007-08-25  Ben Pfaff  <blp@gnu.org>
+
+	Change licensing structure: book is under GFDL, library under
+	LGPL, programs under GPL.  Thanks to Brett Smith <brett@fsf.org>
+	and RMS for assisting with relicensing.
+
+	* README: Describe licensing.
+	
+	* COPYING.DOC: New file.
+	* COPYING.LIB: New file.
+	* fdl.texi: New file.
+	
+	* avl.w: Update licenses.
+	* bst.w: Ditto.
+	* catalogue.w: Ditto.
+	* examples.w: Ditto.
+	* extra.w: Ditto.
+	* glossary.w: Ditto.
+	* pavl.w: Ditto.
+	* pbst.w: Ditto.
+	* prb.w: Ditto.
+	* preface.w: Ditto.
+	* rb.w: Ditto.
+	* references.w: Ditto.
+	* rtavl.w: Ditto.
+	* rtbst.w: Ditto.
+	* rtrb.w: Ditto.
+	* search-alg.w: Ditto.
+	* table.w: Ditto.
+	* tavl.w: Ditto.
+	* tbst.w: Ditto.
+	* trb.w: Ditto.
+	* libavl.w: Update licenses and add FDL as appendix.
+	* intro.w: Update licenses and describe licensing.
+
+2007-03-18  Ben Pfaff  <blp@gnu.org>
+
+	Thanks to Bruno Haible <bruno@clisp.org> for reporting these bugs.
+
+	* avl.w, bst.w, rb.w: Fix BST_MAX_HEIGHT, AVL_MAX_HEIGHT,
+	RB_MAX_HEIGHT to use maximum, not minimum, height of a tree.
+	Update for the 64-bit world, too.
+
+	* avl.w: Fix lower bound on number of nodes in AVL tree with given
+	height.  
+
+2007-03-18  Ben Pfaff  <blp@gnu.org>
+
+	* references.w: (Stout 1986) Fix author name.  Thanks to Quentin
+	Stout for reporting this bug.
+
+2005-01-10  Ben Pfaff  <blp@gnu.org>
+
+	These problems reported by Thomas <Thomas@Cantr.net>.
+	
+	* avl.w: Fix a typo: |s| should be |y| in Implementation, under
+	Step 3 in AVL Insertion.
+
+	* texiweb.c: Also need to avoid -- ligature in code.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* INSTALL, NEWS: Updated.
+
+	* Updated version number, copyright notices in many files.
+
+	* htmlpp: Improved code style (just a little).
+
+	* preface.w: Remove note about GNU PSPP development stalling,
+	seeing as development is now continuing.
+
+	* libavl 2.0.2 released.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: (print) For TOKEN_QUOTED_STRING, enclose output
+	hyphens in @asis{} where necessary to avoid -- and --- ligatures.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Support recent Texinfo.
+	(open_header_file) Change strategy used for @begincode, @endcode
+	in output.
+	(transition) Ditto.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* texitree.c: (main) Break too-long string into multiple shorter
+	strings.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* tbst.w: Reference to (nonexistent) "tbstnodesizebrief" should
+	have been to "tavlnodesizebrief".
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* pbst.w: (copy_error_recovery) Add function comment.
+
+	* rtbst.w: Ditto.
+
+	* tbst.w: Ditto.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* intro.w: Update example TexiWEB sections to match current
+	texiweb output.
+
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	Make the HTML output link each code segment to the fully-expanded
+	C code.
+	
+	* intro.w: Add a note that we do this now.
+	
+	* htmlpp: Recognize HTMLPP comments in input and convert into
+	links on output.
+
+	* texiweb.c: Improve comments.
+	(print_all_segments) New global variable.
+	(struct segment) New member `is_file'.  Remove member `c_next'.
+	(segment_find) Initialize `is_file'.
+	(segment_make_filename) New file.
+	(print_piece_header) Write HTMLPP comment, to indicate to htmlpp
+	what file to link to.
+	(weave_pass_one) Set `is_file'.
+	(segment_definition_line) Add third return parameter, update all
+	callers.
+	(tangle_segment_to_file) New function.
+	(tangle) No need to keep track of file segments here now, because
+	we can just check `is_file' now.  Now set `is_file'.  Add support
+	for --segments using tangle_segment_to_file().
+	(global variable help) Update.
+	(parse_cmd_line) Add --segments option for tangling all the code
+	segments.  Add a couple of long options that were supposed to be
+	there anyway.
+	
+2004-12-28  Ben Pfaff  <blp@gnu.org>
+
+	* tavl.w: (tavl_delete) Fix a bug in which the first iteration of
+	the search loop tried to referenced a nonexistent "tag" bit on the
+	left side of the pseudo-root node.  Thanks to Petr Silhavy for
+	reporting this bug.
+
+2002-08-24  Ben Pfaff  <blp@gnu.org>
+
+	* libavl 2.0.1 released.
+
+2002-08-23  Ben Pfaff  <blp@gnu.org>
+
+	* eps2png: Add a comment to the output .png that indicates the
+	md5sum of the input .eps, so that we can avoid gratuitous
+	regeneration of .png files.  Check the md5 before running
+	Ghostscript and if it matches just touch the .png.
+
+2002-08-23  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: When an output file is specified for tangle mode,
+	only update that file on disk.
+	(tangle) Don't set out_file_name to NULL after outputting a file.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Make ... into an ellipsis for Texinfo output.
+	(TOKEN_ELLIPSIS) New token type.
+	(token_get) Translate ... to TOKEN_ELLIPSIS.
+	(print) Translate TOKEN_ELLIPSIS to @dots{}.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Bug fix.
+	(close_header_file) Don't try to fclose(NULL).
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Divide answers to exercises into nodes, instead of
+	making it one big honking mess of a node.
+	(exercise_answer) Print @node lines.
+	(exercise_open_answer_file) Put @answerfile command at top of
+	answer file.
+	(exercise_menu) New global variable.
+	(exercise_menu_len) New global variable.
+	(exercise_emit_answer_menu) New function.
+	(exercise_menu_add_node) New function.
+	(weave_pass_one) Pass @setheaderfile to open_header_file().
+	(weave_pass_two) Skip over @setheaderfile.  Pass @answerfile to
+	exercise_emit_answer_menu().
+	(tangle) Process @setheaderfile, @setanswerfile.	
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Improve handling of blank lines so that we don't get
+	them in places we shouldn't; particularly, between exercise text
+	and the link to its answer.
+	(catalogue_process_two) Flush blank lines.
+	(exercise_begin) Ditto.
+	(transition) Cancel blank lines on all transitions.
+	(print_line) Increment blank line count for all kinds of blank
+	lines, not just code lines.  Flush blank lines when in text state.
+	(flush_blank_lines) New function.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Add links from exercises to their answers for HTML
+	and Info output.
+	(answer_file_name) New global variable.
+	(header_file_name) New global variable.
+	(input_parse_include) When tangling, don't include the answer file
+	at all.  Now include files even if their names don't end in .w,
+	and don't include the header file.
+	(open_header_file) New `maybedot' macro for use in output.  Record
+	name of header file in header_file_name.
+	(exercise_answer) On pass 2, emit a link to the exercise answer,
+	and emit anchors in the answers themselves.
+	(exercise_anchor) New function.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texitree.c: Support producing output taller than a U.S. letter
+	sheet of paper, by expanding the virtual paper size to whatever
+	proves necessary.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texinfo.tex: Upgraded to Texinfo 4.2 version.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* eps2png: Now does antialiasing by scaling down oversized bitmaps
+	with Imagemagick.
+
+	* htmlpp: New program to postprocess HTML generated by makeinfo
+	into something that looks nice.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* Many files: Updated author postal address.
+
+	* Many files: Fixed capitalization of node names.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: For HTML output, expand @little{...} to
+	<SMALL>...</SMALL>.  Introduce @smnumber{} for proper size in
+	certain places.
+	(open_header_file) Use @ifhtml appropriately in output.
+		
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Recent versions of Texinfo have a @inleftmargin
+	macro, conflicting with ours.  Rename ours to @textinleftmargin.
+	(print_piece_header) Replace @inleftmargin reference by
+	@textinleftmargin.
+	(open_header_file) Ditto.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Recent versions of Texinfo don't allow colons in
+	index entries.
+	(print_piece_header) Omit everything up to the last colon in
+	printing the index entry.
+
+2002-08-22  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Use segment numbers for code section anchor names,
+	instead of trying to normalize the code section titles.
+	(segment_piece_cur) Removed.
+	(segment_name) Removed.
+	(print_anchor_name) Removed.
+	(piece_print_trailer) Output new form of @refalso{} directive.
+	(print_piece_header) Use segment number in @anchor{} directive.
+	(open_header_file) New forms of @refalso{}, @refcode{}.
+	(print) No need to print anchor name for TOKEN_END_CONTROL
+	anymore.
+
+2002-07-04  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: Fix handling of numbers expressed as a fractional
+	part only.  Thanks to Tom Truscott <trt@cs.duke.edu>.
+	(token_get) Oops, '.' is never a digit.
+
+2002-01-10  Ben Pfaff  <blp@gnu.org>
+
+	* texiweb.c: (section_recognize) Only advance section if it's not
+	unnumbered or an appendix section.  Otherwise, just reset lower
+	section levels.
+	(section_reset) New function.
+
+2002-01-06  Ben Pfaff  <blp@gnu.org>
+
+	* libavl 2.0 released as a complete rewrite of earlier versions.
+	See NEWS for more information.
+
+1999-10-02  Ben Pfaff  <blp@gnu.org>
+
+	* avl.c: Replaced instances of sizeof (type) with sizeof *object,
+	for safety.
+	* avlt.c: Ditto.
+	* avltr.c: Ditto.
+	* rb.c: Ditto.
+
+1999-08-07  Ben Pfaff  <blp@gnu.org>
+
+	Implemented red-black tree library.	
+	* Makefile.am: Add rb.c, rb.h in appropriate places.
+	* README: Update.
+	* rb.c: New file.
+	* rb.h: Ditto.
+	* avl.texinfo: Revised.
+
+	* THANKS: Update.
+	* TODO: Update.
+	
+	* avl.c: In several places, replaced usage of comma operator with
+	a proper statement block.
+	* avlt.c: Ditto.
+	* avltr.c: Ditto.
+
+	* avl.h: (AVL_TRAVERSER_INIT) New macro.
+	(avl_init_traverser) New function-like macro.
+	* avlt.h: (AVLT_TRAVERSER_INIT) New macro.
+	(avlt_init_traverser) New function-like macro.
+	* avltr.h: (AVLTR_TRAVERSER_INIT) New macro.
+	(avltr_init_traverser) New function-like macro.
+	* thread-test.c: (main) Use AVL_TRAVERSER_INIT.
+
+	* Made version 1.4.0.
+
+1999-07-30  Ben Pfaff  <blp@gnu.org>
+
+	* avl.texinfo: Update suggested by Jonathan Roy <roy@idle.com>.
+
+1999-05-24  Ben Pfaff  <blp@gnu.org>
+
+	* avl.c: (avl_delete) Make work properly for empty tree.  Furrfu!
+	I should have noticed this before.
+
+1999-05-16  Ben Pfaff  <blp@gnu.org>
+
+	* Makefile.am: Don't require texi2html.  Use $(MAKEINFO)
+	variable.  Thanks to Alexandre Oliva <oliva@dcc.unicamp.br>.
+
+1999-05-15  Ben Pfaff  <blp@gnu.org>
+
+	* Updated copyright dates in several files.
+
+	* Made version 1.3.0.
+
+1999-05-15  Ben Pfaff  <blp@gnu.org>
+
+	* avl.c, avlt.c, avltr.c: In many places replaced assert (p) by
+	assert (p != NULL).  Believe it or not, the former is not valid
+	ANSI C.
+
+	Thanks to "Ficarra, David W, NNAD" <dficarra@att.com> for pointing
+	out the following two sets of bugs.
+	* avl.c: (avl_probe) Fix order of assignment and assertion.
+	* avlt.c: (avlt_walk, avlt_probe, avlt_find) Ditto.
+	* avltr.c: (avltr_probe, avltr_find) Ditto.
+	
+	* avlt.c: (avlt_find, avlt_delete) Check for empty tree.
+	* avltr.c: (avltr_probe) Ditto.
+	
+	* avl.c, avlt.c, avltr.c, thread-test.c: Change test code to only
+	perform a limited number of iterations to facilitate automated
+	testing.
+
+	* avl.c: (avl_find_close) New function contributed by Thomas
+	Binder <binder@iue.tuwien.ac.at>.
+	* avlt.c: (avlt_find_close) Ditto.
+	* avltr.c: (avltr_find_close) Ditto.
+
+	* avl.texinfo: Update.
+
+	libavl is now automake/autoconfiscated.  Contributed by Alexandre
+	Oliva <oliva@dcc.unicamp.br>.
+	* AUTHORS: New file.
+	* Makefile: Now automake-generated.
+	* INSTALL: New file.
+	* Makefile.am: New file.
+	* Makefile.in: New file.
+	* THANKS: New file.
+	* config.h.in: New file.
+	* configure.in: New file.
+	* configure: New file.
+	* install-sh: New file.
+	* missing: New file.
+	* mkinstalldirs: New file.
+	* texinfo.tex: New file.
+	
+1999-05-10  Ben Pfaff  <blp@gnu.org>
+
+	* avl.texinfo: Fix typos.  Thanks to onTy Toom <onty@yahoo.com>
+	for pointing these out.
+
+	* Made version 1.2.9.
+	
+1999-03-13  Ben Pfaff  <blp@gnu.org>
+
+	* avl.c: Fixed two occurrences of = that should have been == in
+	assertions.  Thanks to Girish Zambre <gzambre@sprynet.com> for
+	pointing out this problem.
+
+	* avl.c, avlt.c, avltr.c: __attribute__ must follow declarations
+	for gcc 2.7.x.
+
+	* Made version 1.2.8.
+
+1999-03-13  Ben Pfaff  <blp@gnu.org>
+
+	* TODO: Add some comments from David Kastrup
+	<dak@neuroinformatik.ruhr-uni-bochum.de>.
+
+	* Made version 1.2.7.
+
+1999-01-11  Ben Pfaff  <blp@gnu.org>
+
+	* avl.texinfo: Add skip lists as alternative to AVL trees.  Thanks
+	to Ron Pfeifle <rpfeifle@aw.sgi.com>.
+
+	* Made version 1.2.6.
+
+1999-01-09  Ben Pfaff  <blp@gnu.org>
+
+	* avl.texinfo: Elaborated description of distinction between
+	threaded and unthreaded trees at request of several.
+
+	* Made version 1.2.5.
+
+1998-11-21  Ben Pfaff  <blp@gnu.org>
+
+	* avl.texinfo: Updates suggested by Jason Eisner
+	<jeisner@linc.cis.upenn.edu>.
+
+	* Made version 1.2.4.
+
+1998-10-17  Ben Pfaff  <blp@gnu.org>
+
+	* TODO: New file.
+
+	* avl.c: (xmalloc) Don't declare xmalloc if HAVE_XMALLOC is
+	defined.  By default on error, print a message to stderr and exit,
+	rather than calling abort() as before.
+	* avlt.c: (xmalloc) Same.
+	* avltr.c: (xmalloc) Same.
+
+	* Made version 1.2.3.
+
+1998-09-02  Ben Pfaff  <blp@gnu.org>
+
+	* README: Update.
+
+	* avl.c: (avl_delete) Minor efficiency fixes; removed redundant
+	comparison.
+
+	* avlt.c: (avl_delete) Minor efficiency fix.
+	* avltr.c: (avl_delete) Same change.
+
+	* avl.texi: Update.
+
+	* Made version 1.2.2.
+
+1998-06-11  Ben Pfaff  <blp@gnu.org>
+
+	* avl.c: Don't #define unused when PSPP is defined.
+	(force_avl_delete) Rename avl_force_delete.
+
+	* avlt.c: (force_avlt_delete) Rename avlt_force_delete.
+
+	* avltr.c: (force_avltr_delete) Rename avltr_force_delete.
+
+	* Made version 1.2.1.
+
+1998-06-11  Ben Pfaff  <blp@gnu.org>
+
+	* Version 1.2.0: First GNU release.

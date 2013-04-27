@@ -1,0 +1,121 @@
+#! /usr/bin/perl
+
+# GNU libavl - library for manipulation of binary trees.
+# Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004 Free Software
+# Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to: Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
+# 02110-1301 USA.
+
+use POSIX;
+
+# This is a more-or-less completely bogus AFM parser.
+# It happens to work with the AFM file included with texitree.
+# If it works with any other AFMs, that's just luck.
+open (AFM, "<$ARGV[0]");
+while (<AFM>) {
+    chomp;
+    if (my ($index, $width, $name, $llx, $lly, $urx, $ury)
+	= /^C (-?\d+) ; WX (-?\d+) ; N (\S+) ; B (-?\d+) (-?\d+) (-?\d+) (-?\d+) ;/) {
+	die if defined $by_name{$name};
+	$by_name{$name} = $index;
+
+	next if $index == -1;
+	die if defined $by_index{$index};
+	$by_index{$index} = sprintf ("{%4d, %4d, %4d, %4d, %4d},", $width, $llx, $lly, $urx, $ury);
+    }
+    elsif (my ($name0, $name1, $amt) = /^KPX (\S+) (\S+) (-?\d+)$/) {
+	my ($index0) = $by_name{$name0};
+	die if !defined $index0;
+
+	my ($index1) = $by_name{$name1};
+	die if !defined $index1;
+	
+	next if ($index0 == -1) || ($index1 == -1);
+
+	$kern{chr($index0) . chr($index1)} = $amt;
+    }
+}
+close (AFM);
+
+open (C, ">$ARGV[1]");
+$prefix = $ARGV[2];
+print C "/* Produced by afm2c from $ARGV[0]. */\n\n";
+
+print C "/* Individual character metrics. */\n";
+print C "struct character ${prefix}_chars[] =\n";
+print C "  {\n";
+print C "  /* wdth,  llx,  lly,  urx,  ury */\n";
+for (my ($i) = 0; $i < UCHAR_MAX; $i++) {
+    next if !defined $by_index{$i};
+    
+    $s = "    " . $by_index{$i};
+    $s .= ' ' x (37 - length ($s));
+    $s .= "/* ";
+    if (isprint (chr ($i))) {
+	$s .= chr ($i);
+    } else {
+	$s .= $i;
+    }
+    $s .= " */"; 
+    print C "$s\n";
+
+    $ofs[$i] = $ofs++;
+}
+print C "  };\n\n";
+
+print C "/* Maps from character value to ${prefix}_chars[] index. */\n";
+print C "unsigned char ${prefix}_map[] =\n";
+print C "  {";
+for (my ($i) = 0; $i < UCHAR_MAX; $i++) {
+    print C "\n    " if ($i % 8 == 0);
+    my ($ofs);
+    if (!defined $by_index{$i}) {
+	$ofs = $ofs[32];
+    } else {
+	$ofs = $ofs[$i];
+    }
+    printf C "%3d, ", $ofs;
+}
+print C "\n  };\n\n";
+
+print C "/* Kern pairs in lexicographic order. */\n";
+print C "struct kern_pair ${prefix}_kern[] =\n";
+print C "  {\n";
+print C "  /* ch0, ch1,  amt */\n";
+for $c (sort (keys (%kern))) {
+    my ($index0) = ord (substr ($c, 0, 1));
+    my ($index1) = ord (substr ($c, 1, 1));
+    my ($amt) = $kern{$c};
+    printf C "    {%s, %s, %4d},\n", c_char ($index0), c_char ($index1), $amt;
+}
+print C "  };\n\n";
+
+print C "/* Font metrics. */\n";
+print C "struct font ${prefix}_font =\n";
+print C "  {\n";
+print C "    ${prefix}_chars,\n";
+print C "    ${prefix}_map,\n";
+print C "    ${prefix}_kern,\n";
+print C "  };\n";
+
+sub c_char {
+    my ($index) = @_;
+    if (isprint (chr ($index)) && $index != ord ("'") && $index != ord ("\\")) {
+	return sprintf ("'%c'", $index);
+    } else {
+	return sprintf ("%3d", $index);
+    }
+}

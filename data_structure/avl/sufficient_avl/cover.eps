@@ -1,0 +1,42 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 128 126 571 406
+
+% libavl - library for manipulation of binary trees.
+% Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004 Free Software
+% Foundation, Inc.
+% 
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation; either version 3 of the
+% License, or (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+% See the GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to: Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 
+% 02110-1301 USA.
+
+/BS {
+    4 dict begin /t exch def /r exch def /w exch def
+    /m w 2 div def
+    gsave 2 t exp 1.5 mul rotate
+    t .5 sub t 1 add div setgray
+    0 0 r 0 360 arc fill
+    t 6 lt {
+	r 5 div setlinewidth
+	newpath 0 0 moveto m neg r 9 mul neg lineto stroke
+	newpath 0 0 moveto m r 3 mul neg lineto stroke
+	gsave m neg r 9 mul neg translate m r 1.3 div t 1 add BS grestore
+	gsave m r 3 mul neg translate m r 1.3 div t .75 add BS grestore
+    } if
+    end
+    grestore
+} def
+306 396 translate
+216 9 0 BS
+showpage
+%%EOF

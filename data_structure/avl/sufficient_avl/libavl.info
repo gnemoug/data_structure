@@ -1,0 +1,1441 @@
+This is libavl.info, produced by makeinfo version 4.8 from libavl.texi.
+
+
+Indirect:
+libavl.info-1: 73
+libavl.info-2: 299525
+libavl.info-3: 602158
+libavl.info-4: 907182
+
+Tag Table:
+(Indirect)
+Node: Top73
+Node: Preface771
+Node: Acknowledgements2921
+Node: Contacting the Author4131
+Node: Introduction4964
+Node: Audience5682
+Node: Reading the Code8362
+Node: Code Conventions13368
+Node: Licenses13942
+Ref: 114376
+Ref: 215719
+Node: The Table ADT16853
+Node: Informal Definition17864
+Node: Identifiers20207
+Ref: Identifiers-Footnote-122570
+Node: Comparison Function22731
+Ref: 323760
+Ref: 424854
+Ref: strictweakordering26489
+Ref: ternarycompare27299
+Node: Item and Copy Functions28026
+Ref: 528317
+Node: Memory Allocation29092
+Ref: 629880
+Ref: 731033
+Ref: 831885
+Ref: libavlallocator32265
+Ref: tblallocatorabort32532
+Ref: moreargs32724
+Node: Creation and Destruction33008
+Ref: 933255
+Node: Count35364
+Ref: 1035574
+Ref: tblcount35730
+Node: Insertion and Deletion35906
+Ref: 1137313
+Ref: nullinsert39625
+Ref: genericinsertreplace39910
+Node: Assertions40026
+Ref: 1240709
+Ref: tblassert41270
+Ref: genericassertions41430
+Node: Traversers41832
+Node: Constructors43849
+Ref: 1344148
+Node: Manipulators46081
+Ref: 1446253
+Node: Table Headers48970
+Ref: 1549227
+Ref: 1649544
+Node: Additional Exercises for Tables50193
+Node: Search Algorithms50697
+Node: Sequential Search51697
+Ref: 1752552
+Node: Sequential Search with Sentinel53913
+Ref: 1855208
+Node: Sequential Search of Ordered Array58001
+Ref: 1959179
+Node: Sequential Search of Ordered Array with Sentinel60533
+Ref: 2061069
+Ref: 2162524
+Node: Binary Search of Ordered Array63181
+Ref: 2266669
+Ref: benchmark69755
+Ref: Binary Search of Ordered Array-Footnote-170142
+Node: Binary Search Tree in Array70570
+Ref: 2372369
+Ref: 2474112
+Node: Dynamic Lists75466
+Ref: Dynamic Lists-Footnote-177802
+Node: Binary Search Trees77989
+Ref: 2578698
+Ref: 2679152
+Ref: includeguard79332
+Node: BST Vocabulary79764
+Node: Differing Definitions83383
+Node: BST Data Types85528
+Node: BST Node Structure86120
+Ref: 2786584
+Node: BST Structure87333
+Ref: 2887630
+Node: BST Maximum Height89036
+Ref: 2989954
+Node: BST Rotations90295
+Ref: bstrotation93231
+Node: BST Operations93424
+Ref: 3094050
+Node: Creating a BST94577
+Ref: catalogue-entry-bst-094847
+Ref: 3194852
+Node: Searching a BST95479
+Ref: catalogue-entry-bst-195779
+Ref: 3295784
+Node: Inserting into a BST96576
+Ref: catalogue-entry-bst-298134
+Ref: 3398139
+Ref: rootcast99196
+Ref: bstprobedblptr99313
+Ref: copyinsorder99426
+Ref: levelorder99676
+Node: Root Insertion in a BST99909
+Ref: catalogue-entry-bst-3102544
+Ref: 34102549
+Ref: 35102941
+Ref: 36103458
+Ref: 37103796
+Ref: rootins1104295
+Ref: rootins2105022
+Node: Deleting from a BST105438
+Ref: bstdelcase1106561
+Ref: bstdelcase2107545
+Ref: bstdelcase3108573
+Ref: successor109585
+Ref: catalogue-entry-bst-4110343
+Ref: 38110348
+Ref: 39111217
+Ref: 40111655
+Ref: 41112077
+Ref: 42112301
+Ref: 43112706
+Ref: 44112994
+Ref: 45113256
+Ref: bstdelcase15113561
+Ref: bstaltdel113668
+Ref: modifydata113966
+Node: Deletion by Merging114297
+Ref: catalogue-entry-bst-5117468
+Ref: 46117473
+Ref: 47118097
+Ref: 48119087
+Ref: 49120179
+Node: Traversing a BST120438
+Ref: Traversing a BST-Footnote-1124350
+Node: Recursive Traversal of a BST124556
+Ref: catalogue-entry-bst-6125789
+Ref: 50125794
+Ref: 51126245
+Node: Iterative Traversal of a BST127383
+Ref: 52129971
+Ref: 53130426
+Ref: 54131069
+Ref: 55132062
+Ref: catalogue-entry-bst-7132848
+Ref: 56132853
+Ref: Iterative Traversal of a BST-Footnote-1134547
+Node: Improving Convenience134663
+Ref: 57135246
+Ref: 58135699
+Ref: catalogue-entry-bst-8136636
+Ref: 59136641
+Ref: 60137201
+Ref: 61137769
+Node: Better Iterative Traversal139431
+Ref: 62141555
+Ref: catalogue-entry-bst-9143013
+Ref: 63143018
+Ref: 64144141
+Ref: probegeneration144734
+Node: BST Traverser Null Initialization145788
+Ref: catalogue-entry-bst-10146148
+Ref: 65146153
+Node: BST Traverser First Initialization146442
+Ref: catalogue-entry-bst-11146941
+Ref: 66146946
+Node: BST Traverser Last Initialization147786
+Ref: catalogue-entry-bst-12148207
+Ref: 67148212
+Node: BST Traverser Find Initialization148917
+Ref: catalogue-entry-bst-13149379
+Ref: 68149384
+Node: BST Traverser Insert Initialization150335
+Ref: catalogue-entry-bst-14150743
+Ref: 69150748
+Node: BST Traverser Copying151998
+Ref: catalogue-entry-bst-15152344
+Ref: 70152349
+Node: BST Traverser Advancing153186
+Ref: catalogue-entry-bst-16153843
+Ref: catalogue-entry-bst-17153843
+Ref: 71153848
+Ref: 72154977
+Ref: 73155722
+Node: BST Traverser Retreating156025
+Ref: catalogue-entry-bst-18156412
+Ref: 74156417
+Node: BST Traversal Current Item157704
+Ref: catalogue-entry-bst-19157942
+Ref: 75157947
+Node: BST Traversal Replacing the Current Item158239
+Ref: catalogue-entry-bst-20158450
+Ref: 76158455
+Node: Copying a BST158830
+Node: Copying a BST Recursively159305
+Ref: catalogue-entry-bst-21159634
+Ref: 77159639
+Ref: 78160598
+Node: Copying a BST Iteratively162272
+Ref: catalogue-entry-bst-22162703
+Ref: 79162708
+Ref: 80163471
+Ref: 81164025
+Ref: 82165210
+Ref: copystep166151
+Node: Handling Errors in Iterative BST Copying166253
+Ref: 83168332
+Ref: catalogue-entry-bst-23169310
+Ref: 84169315
+Node: Destroying a BST172258
+Node: Destroying a BST by Rotation172679
+Ref: catalogue-entry-bst-24175348
+Ref: 85175353
+Node: Destroying a BST Recursively176457
+Ref: catalogue-entry-bst-25177145
+Ref: 86177150
+Node: Destroying a BST Iteratively177383
+Ref: catalogue-entry-bst-26180897
+Ref: 87180902
+Node: Balancing a BST182172
+Ref: catalogue-entry-bst-27184609
+Ref: 88184614
+Ref: 89184909
+Node: Transforming a BST into a Vine185244
+Ref: catalogue-entry-bst-28187726
+Ref: 90187731
+Node: Transforming a Vine into a Balanced BST188357
+Ref: Transforming a Vine into a Balanced BST-Footnote-1193697
+Node: Balancing General Trees193876
+Node: Balancing Implementation196861
+Ref: catalogue-entry-bst-29197167
+Ref: 91197172
+Ref: 92199361
+Ref: 93199899
+Ref: 94200824
+Ref: 95201453
+Node: Implementing Compression201708
+Ref: catalogue-entry-bst-30202107
+Ref: 96202112
+Node: Joining BSTs202824
+Ref: catalogue-entry-bst-31208998
+Ref: 97209003
+Ref: Joining BSTs-Footnote-1210067
+Node: Testing BST Functions210148
+Ref: 98213942
+Ref: 99214525
+Ref: 100215071
+Ref: Testing BST Functions-Footnote-1215698
+Node: Testing BSTs215906
+Ref: 101216967
+Ref: 102217845
+Ref: 103218478
+Ref: 104219882
+Ref: 105221549
+Ref: 106223148
+Ref: 107224380
+Ref: 108225656
+Ref: 109225925
+Node: BST Verification226545
+Ref: 110226962
+Ref: 111227946
+Ref: 112228624
+Ref: 113228870
+Ref: 114229353
+Ref: 115230325
+Ref: 116230945
+Ref: 117232012
+Ref: 118232773
+Ref: 119233818
+Node: Displaying BST Structures235014
+Ref: 120235822
+Ref: 121236922
+Node: Test Set Generation237178
+Ref: 122237612
+Node: Testing Overflow239582
+Ref: 123240336
+Ref: 124242691
+Ref: 125242922
+Node: Memory Manager243486
+Ref: 126244064
+Ref: 127245236
+Ref: 128246677
+Ref: 129248020
+Ref: 130248990
+Ref: 131249896
+Ref: 132250410
+Ref: 133253276
+Node: User Interaction254788
+Ref: 134255751
+Node: Utility Functions257471
+Ref: 135257850
+Ref: 136258078
+Ref: 137258315
+Ref: 138258798
+Node: Main Program259073
+Ref: 139259331
+Ref: 140259649
+Ref: 141260911
+Ref: 142264040
+Node: Additional Exercises for BSTs264103
+Ref: bstsentinel264285
+Node: AVL Trees264667
+Ref: 143267977
+Ref: 144268345
+Ref: AVL Trees-Footnote-1268849
+Node: AVL Balancing Rule269044
+Node: Analysis of AVL Balancing Rule271124
+Ref: 145272535
+Ref: Analysis of AVL Balancing Rule-Footnote-1272775
+Node: AVL Data Types273008
+Ref: 146273325
+Node: AVL Operations273746
+Ref: 147274356
+Node: Inserting into an AVL Tree274890
+Ref: catalogue-entry-avl-0277588
+Ref: 148277594
+Ref: 149278044
+Ref: balancedspeed278838
+Node: Step 1 in AVL Insertion279296
+Ref: 150280192
+Node: Step 2 in AVL Insertion280623
+Ref: 151281141
+Node: Step 3 in AVL Insertion281558
+Ref: 152288906
+Ref: avlinsert289570
+Ref: Step 3 in AVL Insertion-Footnote-1290962
+Node: Rebalancing AVL Trees291149
+Ref: 153292386
+Ref: 154292983
+Ref: 155293468
+Ref: 156293696
+Ref: 157294788
+Ref: catalogue-entry-bst-32296425
+Ref: 158296431
+Ref: ynezlink0297309
+Ref: Rebalancing AVL Trees-Footnote-1297935
+Node: AVL Insertion Symmetric Case298006
+Ref: 159298471
+Ref: 160298788
+Ref: catalogue-entry-bst-33298979
+Ref: 161298985
+Node: AVL Insertion Example299525
+Node: Recursive Insertion301414
+Ref: catalogue-entry-avl-1303522
+Ref: 162303528
+Ref: 163304884
+Ref: 164306155
+Ref: 165307420
+Node: Deleting from an AVL Tree307830
+Ref: catalogue-entry-avl-2308819
+Ref: 166308825
+Node: Deleting an AVL Node Step 1 - Search309928
+Ref: avldelsaveitem310751
+Ref: 167310757
+Node: Deleting an AVL Node Step 2 - Delete311156
+Ref: 168311750
+Ref: 169312497
+Ref: 170312770
+Ref: 171313264
+Ref: 172314013
+Ref: avlmodifydata314455
+Node: Deleting an AVL Node Step 3 - Update314756
+Ref: 173316291
+Ref: 174320983
+Node: Deleting an AVL Node Step 4 - Rebalance321234
+Ref: 175321693
+Ref: avldelcase1322052
+Ref: 176322838
+Ref: avldel2323117
+Ref: 177324588
+Node: Deleting an AVL Node Step 5 - Finish Up325295
+Ref: 178325535
+Node: AVL Deletion Symmetric Case325694
+Ref: 179325984
+Node: Traversal of an AVL Tree326747
+Ref: 180327129
+Ref: catalogue-entry-avl-3328064
+Ref: 181328070
+Ref: catalogue-entry-avl-4328740
+Ref: 182328746
+Ref: catalogue-entry-avl-5329354
+Ref: 183329360
+Ref: catalogue-entry-avl-6329970
+Ref: 184329976
+Ref: catalogue-entry-avl-7330824
+Ref: 185330830
+Ref: catalogue-entry-avl-8331916
+Ref: 186331922
+Node: Copying an AVL Tree333197
+Ref: catalogue-entry-avl-9333557
+Ref: 187333563
+Node: Testing AVL Trees336284
+Ref: 188336831
+Ref: 189337329
+Ref: 190338516
+Ref: 191339817
+Ref: 192340312
+Ref: 193341078
+Node: Red-Black Trees341349
+Ref: 194342502
+Ref: 195342860
+Node: RB Balancing Rule343245
+Ref: blackenroot347130
+Node: Analysis of Red-Black Balancing Rule347753
+Node: RB Data Types348549
+Ref: 196348945
+Ref: 197349473
+Node: Operations in an RB Tree349873
+Ref: 198350399
+Node: Inserting into an RB Tree350971
+Ref: catalogue-entry-rb-0351613
+Ref: 199351619
+Ref: 200351976
+Node: Inserting an RB Node Step 1 - Search352720
+Ref: 201353198
+Node: Inserting an RB Node Step 2 - Insert353587
+Ref: 202353827
+Node: Inserting an RB Node Step 3 - Rebalance354252
+Ref: 203356402
+Ref: 204357310
+Ref: rbinscase1357854
+Ref: 205359227
+Ref: rbinscase2359531
+Ref: 206360590
+Ref: rbinscase3360946
+Ref: 207362227
+Ref: mink3362473
+Node: RB Insertion Symmetric Case362823
+Ref: 208363055
+Ref: 209363555
+Ref: 210363745
+Ref: 211364023
+Node: Initial Black Insertion in an RB Tree364259
+Ref: catalogue-entry-rb-1364924
+Ref: 212364930
+Ref: 213365989
+Ref: 214366815
+Ref: 215368378
+Ref: 216369494
+Ref: 217370719
+Ref: 218370977
+Ref: 219371523
+Ref: 220371711
+Ref: 221371994
+Node: Deleting from an RB Tree372203
+Ref: catalogue-entry-rb-2372787
+Ref: 222372793
+Node: Deleting an RB Node Step 2 - Delete373758
+Ref: rbcolorswap377390
+Ref: 223378150
+Ref: rbdel1378594
+Ref: 224378772
+Ref: rbdel2378975
+Ref: 225379739
+Ref: rbdel3380041
+Ref: 226381083
+Ref: noswapcolors381541
+Node: Deleting an RB Node Step 3 - Rebalance381956
+Ref: 227382560
+Ref: 228383758
+Ref: 229384749
+Ref: rbdcr385541
+Ref: 230386919
+Ref: rbdelcase1387740
+Ref: 231388863
+Ref: rbdelcase2389081
+Ref: 232390105
+Ref: rbdelcase3390494
+Ref: 233391491
+Node: Deleting an RB Node Step 4 - Finish Up391792
+Ref: 234392115
+Node: RB Deletion Symmetric Case392312
+Ref: 235392495
+Ref: 236393226
+Ref: 237393602
+Ref: 238393754
+Ref: 239394065
+Node: Testing RB Trees394394
+Ref: 240394706
+Ref: 241395195
+Ref: 242396379
+Ref: 243397726
+Ref: 244398017
+Ref: 245398640
+Ref: 246398978
+Ref: 247399801
+Ref: 248400009
+Node: Threaded Binary Search Trees400249
+Ref: 249401776
+Ref: 250402154
+Ref: Threaded Binary Search Trees-Footnote-1402596
+Node: Threads402759
+Node: TBST Data Types405602
+Ref: 251406012
+Ref: 252406830
+Node: TBST Operations407694
+Ref: 253408237
+Node: Creating a TBST408785
+Ref: catalogue-entry-tbst-0409062
+Ref: 254409068
+Node: Searching a TBST409758
+Ref: catalogue-entry-tbst-1410196
+Ref: 255410202
+Node: Inserting into a TBST410794
+Ref: catalogue-entry-tbst-2412638
+Ref: 256412644
+Ref: 257413125
+Ref: 258413608
+Node: Deleting from a TBST414281
+Ref: catalogue-entry-tbst-3414801
+Ref: 259414807
+Ref: 260415685
+Ref: 261416443
+Ref: 262418483
+Ref: 263419531
+Ref: 264420719
+Ref: 265423304
+Ref: 266423619
+Ref: 267423955
+Ref: 268424448
+Ref: tbstparent424642
+Ref: ptrtaglink424833
+Ref: tbstthreadsearch425255
+Node: Traversing a TBST425560
+Ref: 269426700
+Ref: 270427276
+Node: TBST Traverser Null Initialization428223
+Ref: catalogue-entry-tbst-4428446
+Ref: 271428452
+Node: TBST Traverser First Initialization428702
+Ref: catalogue-entry-tbst-5428944
+Ref: 272428950
+Node: TBST Traverser Last Initialization429436
+Ref: catalogue-entry-tbst-6429676
+Ref: 273429682
+Node: TBST Traverser Find Initialization430166
+Ref: catalogue-entry-tbst-7430502
+Ref: 274430508
+Node: TBST Traverser Insert Initialization431219
+Ref: catalogue-entry-tbst-8431620
+Ref: 275431626
+Node: TBST Traverser Copying432217
+Ref: catalogue-entry-tbst-9432436
+Ref: 276432442
+Node: TBST Traverser Advancing432836
+Ref: catalogue-entry-tbst-10433458
+Ref: 277433464
+Node: TBST Traverser Retreating434181
+Ref: catalogue-entry-tbst-11434370
+Ref: 278434376
+Node: Copying a TBST435039
+Ref: catalogue-entry-tbst-12438214
+Ref: 279438220
+Ref: catalogue-entry-tbst-13439968
+Ref: 280439974
+Ref: 281440170
+Ref: 282443190
+Node: Destroying a TBST443896
+Ref: catalogue-entry-tbst-14444456
+Ref: 283444462
+Node: Balancing a TBST445242
+Ref: catalogue-entry-tbst-15446143
+Ref: 284446149
+Ref: 285446394
+Node: Transforming a TBST into a Vine446718
+Ref: catalogue-entry-tbst-16447550
+Ref: 286447556
+Node: Transforming a Vine into a Balanced TBST450363
+Ref: catalogue-entry-tbst-17451005
+Ref: 287451011
+Ref: catalogue-entry-tbst-18454009
+Ref: 288454015
+Ref: 289455049
+Ref: 290455316
+Ref: 291455940
+Node: Testing TBSTs456134
+Ref: 292456965
+Ref: 293457433
+Ref: 294458522
+Ref: 295460027
+Ref: 296460817
+Ref: 297461550
+Ref: 298462169
+Node: Threaded AVL Trees463047
+Ref: 299464015
+Ref: 300464410
+Node: TAVL Data Types464737
+Ref: 301465045
+Ref: tavlnodesize465592
+Node: TBST Rotations465834
+Ref: tbstrot468042
+Node: TAVL Operations468199
+Ref: 302468591
+Node: Inserting into a TAVL Tree469159
+Ref: catalogue-entry-tavl-0469530
+Ref: 303469536
+Node: Steps 1 and 2 in TAVL Insertion470119
+Ref: 304470830
+Ref: 305471575
+Node: Rebalancing TAVL Trees471773
+Ref: 306472178
+Ref: 307472836
+Ref: 308473442
+Ref: catalogue-entry-tavl-1476092
+Ref: 309476098
+Ref: tavlaltdblrot476598
+Node: TAVL Insertion Symmetric Case476759
+Ref: 310477026
+Ref: 311477389
+Ref: catalogue-entry-tavl-2477748
+Ref: 312477754
+Node: Deleting from a TAVL Tree478241
+Ref: catalogue-entry-tavl-3478776
+Ref: 313478782
+Node: Deleting a TAVL Node Step 1 - Search479717
+Ref: 314480180
+Node: Deleting a TAVL Node Step 2 - Delete480663
+Ref: 315481405
+Ref: 316482273
+Ref: 317482678
+Ref: 318483162
+Ref: 319483669
+Node: Deleting a TAVL Node Step 3 - Update484148
+Ref: 320485270
+Node: Deleting a TAVL Node Step 4 - Rebalance485926
+Ref: 321486489
+Ref: 322487246
+Ref: tavldelcase2487550
+Ref: 323488441
+Ref: tavldelcase3488736
+Ref: 324490207
+Node: TAVL Deletion Symmetric Case490534
+Ref: 325490804
+Ref: 326491620
+Ref: 327491867
+Ref: 328492106
+Node: Finding the Parent of a TBST Node492434
+Ref: catalogue-entry-tbst-19495006
+Ref: 329495012
+Ref: tbstrootparent496494
+Ref: tbstdelstack496687
+Node: Copying a TAVL Tree497059
+Ref: catalogue-entry-tavl-4497389
+Ref: 330497395
+Ref: 331498218
+Node: Testing TAVL Trees498452
+Ref: 332498624
+Ref: 333499145
+Ref: 334500765
+Node: Threaded Red-Black Trees501891
+Ref: 335502457
+Ref: 336502841
+Node: TRB Data Types503117
+Ref: 337503568
+Node: TRB Operations504234
+Ref: 338504689
+Node: Inserting into a TRB Tree505287
+Ref: catalogue-entry-trb-0505514
+Ref: 339505520
+Node: Steps 1 and 2 in TRB Insertion506367
+Ref: 340506683
+Ref: 341507354
+Node: Step 3 in TRB Insertion507519
+Ref: 342507833
+Ref: 343508387
+Ref: 344509511
+Ref: 345511372
+Ref: 346512571
+Node: TRB Insertion Symmetric Case512862
+Ref: 347513033
+Ref: 348513567
+Ref: 349513740
+Ref: 350514042
+Node: Deleting from a TRB Tree514721
+Ref: catalogue-entry-trb-1514959
+Ref: 351514965
+Node: Deleting a TRB Node Step 1 - Search515816
+Ref: 352516094
+Node: Deleting a TRB Node Step 2 - Delete516545
+Ref: 353517095
+Ref: 354518027
+Ref: 355518526
+Ref: 356519121
+Ref: 357519880
+Node: Deleting a TRB Node Step 3 - Rebalance520983
+Ref: 358521373
+Ref: 359522261
+Ref: 360523217
+Ref: 361523549
+Ref: 362524627
+Ref: 363525874
+Node: Deleting a TRB Node Step 4 - Finish Up526227
+Ref: 364526552
+Node: TRB Deletion Symmetric Case526730
+Ref: 365526914
+Ref: 366527687
+Ref: 367527880
+Ref: 368528051
+Ref: 369528367
+Node: Testing TRB Trees528917
+Ref: 370529099
+Ref: 371529609
+Ref: 372531210
+Ref: 373532386
+Node: Right-Threaded Binary Search Trees533026
+Ref: 374535409
+Ref: 375535825
+Ref: Right-Threaded Binary Search Trees-Footnote-1536553
+Node: RTBST Data Types536843
+Ref: 376537037
+Node: RTBST Operations537536
+Ref: 377537714
+Node: Searching an RTBST538285
+Ref: catalogue-entry-rtbst-0538817
+Ref: 378538823
+Node: Inserting into an RTBST539569
+Ref: catalogue-entry-rtbst-1540115
+Ref: 379540121
+Ref: 380540614
+Ref: 381542664
+Node: Deleting from an RTBST543225
+Ref: 382543819
+Ref: 383544495
+Ref: 384545209
+Node: Right-Looking Deletion in a RTBST545520
+Ref: catalogue-entry-rtbst-2545968
+Ref: 385545974
+Ref: 386547002
+Ref: 387548151
+Ref: 388548709
+Ref: 389549390
+Node: Left-Looking Deletion in an RTBST550336
+Ref: catalogue-entry-rtbst-3551780
+Ref: 390551786
+Ref: 391553097
+Ref: 392553428
+Ref: 393554388
+Ref: 394554930
+Ref: 395555277
+Ref: 396555621
+Node: Comparing Deletion Algorithms556121
+Node: Traversing an RTBST559008
+Ref: 397559739
+Node: RTBST Traverser First Initialization560587
+Ref: catalogue-entry-rtbst-4560985
+Ref: 398560991
+Node: RTBST Traverser Last Initialization561490
+Ref: catalogue-entry-rtbst-5561894
+Ref: 399561900
+Node: RTBST Traverser Find Initialization562401
+Ref: catalogue-entry-rtbst-6562720
+Ref: 400562726
+Node: RTBST Traverser Advancing563575
+Ref: catalogue-entry-rtbst-7564035
+Ref: 401564041
+Node: RTBST Traverser Retreating564726
+Ref: catalogue-entry-rtbst-8565251
+Ref: 402565257
+Ref: 403567824
+Ref: 404568555
+Node: Copying an RTBST568846
+Ref: 405569764
+Ref: catalogue-entry-rtbst-9571472
+Ref: 406571478
+Ref: 407572529
+Ref: catalogue-entry-rtbst-10572922
+Ref: 408572928
+Node: Destroying an RTBST573122
+Ref: catalogue-entry-rtbst-11573407
+Ref: 409573413
+Node: Balancing an RTBST574202
+Ref: catalogue-entry-rtbst-12574527
+Ref: 410574533
+Ref: catalogue-entry-rtbst-13574953
+Ref: 411574959
+Ref: catalogue-entry-rtbst-14575631
+Ref: 412575637
+Node: Testing RTBSTs576473
+Ref: 413576674
+Ref: 414577177
+Ref: 415578250
+Ref: 416579447
+Node: Right-Threaded AVL Trees580195
+Ref: 417580852
+Ref: 418581257
+Node: RTAVL Data Types581597
+Ref: 419581994
+Node: RTAVL Operations582556
+Ref: 420582971
+Node: RTBST Rotations583556
+Ref: rtbstrot585554
+Node: Inserting into an RTAVL Tree585718
+Ref: catalogue-entry-rtavl-0586034
+Ref: 421586040
+Node: Steps 1-1 in RTAVL Insertion586595
+Ref: 422587174
+Ref: 423587946
+Node: Rebalancing RTAVL Trees588484
+Ref: 424589204
+Ref: 425589923
+Ref: 426590289
+Ref: 427592283
+Ref: 428593224
+Ref: rtavlinscase2593662
+Ref: 429594848
+Ref: 430595862
+Node: Deleting from an RTAVL Tree596267
+Ref: catalogue-entry-rtavl-1596503
+Ref: 431596509
+Node: Deleting a RTAVL Node Step 1 - Search597380
+Ref: 432597861
+Node: Deleting a RTAVL Node Step 2 - Delete598557
+Ref: 433599070
+Ref: 434599853
+Ref: 435600365
+Ref: 436600825
+Ref: 437601283
+Ref: 438601665
+Ref: 439601982
+Node: Deleting a RTAVL Node Step 3 - Update602158
+Ref: 440602568
+Node: Deleting a RTAVL Node Step 4 - Rebalance603281
+Ref: 441603848
+Ref: 442604475
+Ref: 443605600
+Ref: 444605859
+Ref: 445606441
+Ref: 446606654
+Ref: 447607876
+Ref: 448608834
+Node: Copying an RTAVL Tree610118
+Ref: catalogue-entry-rtavl-2610466
+Ref: 449610472
+Ref: catalogue-entry-rtavl-3610714
+Ref: 450610720
+Node: Testing RTAVL Trees611641
+Ref: 451611784
+Ref: 452612316
+Ref: 453613620
+Node: Right-Threaded Red-Black Trees614709
+Ref: 454615248
+Ref: 455615642
+Node: RTRB Data Types615928
+Ref: 456616311
+Node: RTRB Operations617006
+Ref: 457617325
+Node: Inserting into an RTRB Tree617944
+Ref: catalogue-entry-rtrb-0618288
+Ref: 458618294
+Node: Steps 1 and 2 in RTRB Insertion619090
+Ref: 459619715
+Ref: 460620428
+Node: Step 3 in RTRB Insertion620961
+Ref: 461621231
+Ref: 462622276
+Ref: 463622818
+Ref: 464623566
+Ref: 465623739
+Ref: 466625118
+Ref: 467626115
+Ref: 468627531
+Ref: 469628479
+Node: Deleting from an RTRB Tree628746
+Ref: catalogue-entry-rtrb-1629076
+Ref: 470629082
+Node: Deleting an RTRB Node Step 2 - Delete629862
+Ref: 471630330
+Ref: 472631127
+Ref: 473631470
+Ref: 474631846
+Ref: 475632472
+Node: Deleting an RTRB Node Step 3 - Rebalance633080
+Ref: 476633540
+Ref: 477634770
+Ref: 478635575
+Ref: 479637469
+Ref: 480638635
+Ref: 481640069
+Ref: 482641235
+Node: Deleting an RTRB Node Step 4 - Finish Up641574
+Ref: 483641783
+Node: Testing RTRB Trees641942
+Ref: 484642095
+Ref: 485642616
+Ref: 486643916
+Ref: 487645061
+Node: BSTs with Parent Pointers645711
+Ref: 488648344
+Ref: 489648750
+Ref: BSTs with Parent Pointers-Footnote-1649117
+Node: PBST Data Types649245
+Ref: 490649640
+Node: PBST Operations650901
+Ref: 491651619
+Node: Inserting into a PBST652203
+Ref: catalogue-entry-pbst-0652505
+Ref: 492652511
+Ref: 493653018
+Ref: 494653357
+Node: Deleting from a PBST653777
+Ref: catalogue-entry-pbst-1654066
+Ref: 495654072
+Ref: 496654814
+Ref: 497655425
+Ref: 498655637
+Ref: pbstdel1656071
+Ref: 499656238
+Ref: pbstdel2656545
+Ref: 500657097
+Ref: pbstdel3657439
+Ref: 501657732
+Ref: 502658949
+Ref: 503659374
+Node: Traversing a PBST659767
+Ref: 504660147
+Node: PBST Traverser First Initialization660976
+Ref: catalogue-entry-pbst-2661330
+Ref: 505661336
+Node: PBST Traverser Last Initialization661836
+Ref: catalogue-entry-pbst-3662166
+Ref: 506662172
+Node: PBST Traverser Find Initialization662670
+Ref: catalogue-entry-pbst-4663142
+Ref: 507663148
+Node: PBST Traverser Insert Initialization663772
+Ref: catalogue-entry-pbst-5664113
+Ref: 508664119
+Node: PBST Traverser Advancing665209
+Ref: catalogue-entry-pbst-6666560
+Ref: 509666566
+Node: PBST Traverser Retreating667494
+Ref: catalogue-entry-pbst-7667768
+Ref: 510667774
+Node: Copying a PBST668704
+Ref: catalogue-entry-pbst-8669287
+Ref: 511669293
+Ref: 512672351
+Node: Balancing a PBST672827
+Ref: catalogue-entry-pbst-9673328
+Ref: 513673334
+Ref: catalogue-entry-pbst-10673689
+Ref: 514673695
+Ref: 515674295
+Ref: catalogue-entry-pbst-11675296
+Ref: 516675302
+Node: Testing PBSTs676253
+Ref: 517676386
+Ref: 518676892
+Ref: 519678400
+Ref: 520679134
+Node: AVL Trees with Parent Pointers679671
+Ref: 521680302
+Ref: 522680697
+Node: PAVL Data Types681051
+Ref: 523681366
+Node: PBST Rotations681790
+Ref: pbstrot682753
+Node: PAVL Operations682918
+Ref: 524683258
+Node: Inserting into a PAVL Tree683806
+Ref: catalogue-entry-pavl-0684496
+Ref: 525684502
+Node: Steps 1 and 2 in PAVL Insertion685354
+Ref: 526686034
+Ref: 527686562
+Node: Step 3 in PAVL Insertion686760
+Ref: 528687747
+Node: Rebalancing PAVL Trees688357
+Ref: 529689250
+Ref: 530689878
+Ref: 531690507
+Ref: 532691822
+Node: PAVL Insertion Symmetric Case692224
+Ref: 533692398
+Ref: 534692758
+Ref: 535693053
+Node: Deleting from a PAVL Tree693456
+Ref: catalogue-entry-pavl-1694136
+Ref: 536694142
+Node: Deleting a PAVL Node Step 2 - Delete694871
+Ref: 537695494
+Ref: 538696108
+Ref: 539696398
+Ref: 540696737
+Node: Deleting a PAVL Node Step 3 - Update696913
+Ref: 541697385
+Node: Deleting a PAVL Node Step 4 - Rebalance698126
+Ref: 542698457
+Ref: 543698937
+Ref: 544699600
+Node: PAVL Deletion Symmetric Case700056
+Ref: 545700245
+Ref: 546700720
+Ref: 547700945
+Node: Traversing a PAVL Tree701402
+Ref: 548701858
+Node: Copying a PAVL Tree702559
+Ref: catalogue-entry-pavl-2702855
+Ref: 549702861
+Node: Testing PAVL Trees705746
+Ref: 550705932
+Ref: 551706451
+Ref: 552708147
+Node: Red-Black Trees with Parent Pointers709192
+Ref: 553709642
+Ref: 554710026
+Node: PRB Data Types710302
+Ref: 555710667
+Node: PRB Operations711179
+Ref: 556711614
+Node: Inserting into a PRB Tree712206
+Ref: catalogue-entry-prb-0712792
+Ref: 557712798
+Node: Step 2 in PRB Insertion713573
+Ref: 558713891
+Node: Step 3 in PRB Insertion714040
+Ref: 559715519
+Ref: 560716428
+Ref: 561717949
+Ref: 562718959
+Ref: 563720307
+Node: PRB Insertion Symmetric Case720564
+Ref: 564720737
+Ref: 565721333
+Ref: 566721507
+Ref: 567721864
+Node: Deleting from a PRB Tree722122
+Ref: catalogue-entry-prb-1722577
+Ref: 568722583
+Node: Deleting a PRB Node Step 2 - Delete723477
+Ref: 569724000
+Ref: 570724640
+Ref: 571725117
+Ref: 572725669
+Node: Deleting a PRB Node Step 3 - Rebalance725875
+Ref: 573726732
+Ref: 574727936
+Ref: 575729708
+Ref: 576730209
+Ref: 577730534
+Ref: 578731803
+Node: Deleting a PRB Node Step 4 - Finish Up732171
+Ref: 579732410
+Node: PRB Deletion Symmetric Case732585
+Ref: 580732771
+Ref: 581733521
+Ref: 582733874
+Ref: 583733999
+Ref: 584734399
+Node: Testing PRB Trees734771
+Ref: 585734953
+Ref: 586735461
+Ref: 587736672
+Node: References738125
+Ref: Aho 1986738292
+Ref: Bentley 2000738444
+Ref: Brown 2001738554
+Ref: Cormen 1990738711
+Ref: FSF 1999738856
+Ref: FSF 2001738956
+Ref: ISO 1990739049
+Ref: ISO 1998739269
+Ref: ISO 1999739396
+Ref: Kernighan 1976739526
+Ref: Kernighan 1988739651
+Ref: Knuth 1997739795
+Ref: Knuth 1998a739952
+Ref: Knuth 1998b740111
+Ref: Knuth 1977740268
+Ref: Knuth 1978740431
+Ref: Knuth 1992740591
+Ref: Knuth 2000740794
+Ref: Pfaff 1998741019
+Ref: Sedgewick 1998741226
+Ref: SGI 1993741349
+Ref: Stout 1986741474
+Ref: Summit 1999741625
+Node: Supplementary Code741792
+Node: Option Parser742122
+Ref: 588742537
+Ref: 589742975
+Ref: 590743565
+Node: Command-Line Parser747376
+Ref: 591747823
+Node: GNU Free Documentation License757219
+Node: Glossary779659
+Ref: adjacent779824
+Ref: AVL tree779935
+Ref: balance780099
+Ref: balance condition780301
+Ref: balance factor780431
+Ref: balanced tree780653
+Ref: binary search780943
+Ref: binary search tree781090
+Ref: binary tree781442
+Ref: black box781658
+Ref: black-height781794
+Ref: BST782039
+Ref: child782105
+Ref: children782246
+Ref: color782301
+Ref: complete binary tree782513
+Ref: compression782721
+Ref: deep copy782832
+Ref: dynamic783082
+Ref: empty tree783284
+Ref: height783335
+Ref: idempotent783501
+Ref: inorder predecessor783648
+Ref: inorder successor783762
+Ref: inorder traversal783874
+Ref: iteration784067
+Ref: key784261
+Ref: leaf784361
+Ref: left child784444
+Ref: left rotation784643
+Ref: left subtree784686
+Ref: left-threaded tree784763
+Ref: literate programming784993
+Ref: node785170
+Ref: non-branching node785335
+Ref: nonterminal node785458
+Ref: parent785562
+Ref: parent pointer785735
+Ref: pathological case785820
+Ref: path786068
+Ref: postorder traversal786249
+Ref: preorder traversal786444
+Ref: rebalance786638
+Ref: recursion787137
+Ref: red-black tree787316
+Ref: right child787564
+Ref: right rotation787767
+Ref: right subtree787811
+Ref: right-threaded tree787889
+Ref: rotation788092
+Ref: root788429
+Ref: rule 1788678
+Ref: rule 2788851
+Ref: sentinel789167
+Ref: sequential search789394
+Ref: sequential search with sentinel789553
+Ref: shallow copy789705
+Ref: simple path789952
+Ref: static790042
+Ref: subtree790358
+Ref: symmetric traversal790465
+Ref: tag790541
+Ref: tail recursion790698
+Ref: terminal node790956
+Ref: thread791066
+Ref: threaded tree791327
+Ref: traversal791537
+Ref: undefined behavior791854
+Ref: value792083
+Ref: vine792237
+Ref: visit792367
+Node: Answers to All the Exercises792515
+Node: Answers for Chapter 2793039
+Ref: 2-1#1793201
+Ref: 2-2#1793509
+Ref: 2-2#2794039
+Ref: 2-3#1794410
+Ref: 2-3#2795059
+Ref: 2-3#3795704
+Ref: 2-3#4795931
+Ref: 2-3#5796056
+Ref: 2-3#6797305
+Ref: 2-5#1798886
+Ref: 2-5#2799469
+Ref: 592799555
+Ref: 2-5#3800017
+Ref: 2-7#1801670
+Ref: 593801912
+Ref: 2-8#1802271
+Ref: 2-8#2802474
+Ref: 2-8#3802723
+Ref: 594802734
+Ref: 2-9#1803356
+Ref: 595803703
+Ref: 2-9#2804081
+Ref: 596804858
+Ref: 2-9#3805397
+Ref: 2-12#1805749
+Ref: 2-12#2807263
+Node: Answers for Chapter 3808023
+Ref: 3-1#1808215
+Ref: 597808370
+Ref: 3-4#1808918
+Ref: 3-5#1809028
+Ref: 598809361
+Ref: 3-5#2810181
+Ref: 599810382
+Ref: 600811488
+Ref: 3-5#3812098
+Ref: 601812150
+Ref: 602812527
+Ref: 603813193
+Ref: 604813476
+Ref: 605814599
+Ref: 606815096
+Ref: 607815787
+Ref: 608816285
+Ref: 609817676
+Ref: 610818321
+Ref: 611818918
+Ref: 612819494
+Ref: 613819840
+Ref: 614820386
+Ref: 615820673
+Ref: 616820871
+Ref: 617820972
+Ref: 3-5#4821600
+Ref: 3-6#1825351
+Ref: 618825393
+Ref: 3-6#2826138
+Ref: 619826149
+Ref: 620826590
+Ref: 621827515
+Node: Answers for Chapter 4827834
+Ref: 4#1828001
+Ref: 4-2-2#1828523
+Ref: 4-2-3#1828925
+Ref: 4-3#1829711
+Ref: 4-3#2830090
+Ref: catalogue-entry-bst-34830347
+Ref: catalogue-entry-bst-35830563
+Ref: 4-7#1830802
+Ref: 4-7#2832208
+Ref: catalogue-entry-bst-36832593
+Ref: 622832599
+Ref: 4-7#3833221
+Ref: 4-7#4833528
+Ref: catalogue-entry-bst-37833825
+Ref: 623833831
+Ref: 4-7-1#1834765
+Ref: catalogue-entry-bst-38834769
+Ref: 624834775
+Ref: 625835597
+Ref: 626836008
+Ref: 4-7-1#2836149
+Ref: catalogue-entry-bst-39836288
+Ref: 627836294
+Ref: 628837402
+Ref: 629838077
+Ref: 4-7-1#3838948
+Ref: 4-8#1840708
+Ref: catalogue-entry-bst-40840796
+Ref: 630840802
+Ref: 4-8#2840905
+Ref: catalogue-entry-bst-41840976
+Ref: 631840982
+Ref: 4-8#3841346
+Ref: 4-9-1#1841884
+Ref: 4-9-1#2842349
+Ref: catalogue-entry-bst-42842353
+Ref: 632842359
+Ref: 4-9-2#1842838
+Ref: catalogue-entry-bst-43844561
+Ref: 633844567
+Ref: 4-9-2-1#1845864
+Ref: catalogue-entry-bst-44847298
+Ref: 634847304
+Ref: 4-9-2-1#2847948
+Ref: 4-9-3#1848527
+Ref: 4-9-3#2849335
+Ref: 4-9-3#3850356
+Ref: catalogue-entry-bst-45851623
+Ref: 635851629
+Ref: 4-9-3-2#1852861
+Ref: 4-9-3-6#1853112
+Ref: 4-10-1#1853253
+Ref: catalogue-entry-bst-46853514
+Ref: 636853520
+Ref: 637854289
+Ref: catalogue-entry-bst-47854543
+Ref: 638854549
+Ref: 4-10-1#2855261
+Ref: catalogue-entry-bst-48855345
+Ref: 639855351
+Ref: 4-10-2#1856500
+Ref: 640856536
+Ref: 4-11-1#1858134
+Ref: 4-13#1858232
+Ref: catalogue-entry-bst-49858689
+Ref: 641858695
+Ref: 4-14-1#1861201
+Ref: 4-14-1#2862023
+Ref: 4-14-1-1#1862740
+Ref: 4-14-1-1#2863325
+Ref: 4-14-2#1863366
+Ref: 642863377
+Ref: 4-14-2#2863863
+Ref: 643864036
+Ref: 4-14-2#3864588
+Ref: 644864599
+Ref: 4-14-2#4866699
+Ref: 645867230
+Ref: 4-14-3#1867824
+Ref: 646867835
+Ref: 4-14-4#1870158
+Ref: 4-15#1870511
+Ref: 647870662
+Ref: 648871040
+Ref: 649871646
+Ref: 650872567
+Ref: 651873489
+Node: Answers for Chapter 5873913
+Ref: 5-4#1874105
+Ref: 5-4-2#1875578
+Ref: 5-4-3#1876109
+Ref: 5-4-3#2876604
+Ref: 5-4-3#3877324
+Ref: 5-4-3#4877973
+Ref: catalogue-entry-avl-10878003
+Ref: 652878009
+Ref: 5-4-4#1878827
+Ref: 5-4-4#2878941
+Ref: 5-4-4#3879345
+Ref: 5-4-4#4881371
+Ref: 5-4-4#5881712
+Ref: 5-5-2#1881751
+Ref: catalogue-entry-avl-11881817
+Ref: 653881823
+Ref: 5-5-2#2882115
+Ref: 5-5-4#1882327
+Ref: 5-5-4#2882568
+Ref: 5-6#1885181
+Node: Answers for Chapter 6885580
+Ref: 6-1#1885772
+Ref: 6-1#2885999
+Ref: 6-1#3886609
+Ref: 6-2#1887095
+Ref: 6-4-2#1887485
+Ref: 6-4-3#1887640
+Ref: 6-4-3#2887884
+Ref: 6-5-1#1888003
+Ref: 6-5-1#2888505
+Ref: catalogue-entry-rb-3888929
+Ref: 654888935
+Ref: 655889333
+Ref: 656889759
+Node: Answers for Chapter 7889902
+Ref: 7-2#1890094
+Ref: 7-6#1890507
+Ref: 7-7#1890665
+Ref: catalogue-entry-tbst-20890797
+Ref: 657890803
+Ref: 7-7#2891176
+Ref: 7-7#3892421
+Ref: catalogue-entry-tbst-21892477
+Ref: 658892483
+Ref: 7-7#4892985
+Ref: 7-9#1894750
+Ref: 7-9#2895280
+Node: Answers for Chapter 8895771
+Ref: 8-1#1895963
+Ref: 8-2#1896439
+Ref: catalogue-entry-tbst-22896517
+Ref: catalogue-entry-tbst-23896896
+Ref: 8-4-2#1897302
+Ref: catalogue-entry-tavl-5897641
+Ref: 659897647
+Ref: 8-5-2#1898105
+Ref: catalogue-entry-tavl-6898267
+Ref: 660898273
+Ref: 8-5-6#1898440
+Ref: 8-5-6#2900638
+Ref: 8-5-6#3901156
+Ref: catalogue-entry-tavl-7901344
+Ref: 661901350
+Ref: 662902176
+Ref: 663902842
+Ref: 664903118
+Ref: 665903372
+Ref: 666903805
+Ref: 667904619
+Ref: 668905193
+Ref: 669906079
+Node: Answers for Chapter 9907182
+Ref: 9-3-3#1907379
+Ref: catalogue-entry-trb-2907488
+Ref: 670907494
+Ref: 9-4-2#1911262
+Ref: catalogue-entry-trb-3911266
+Ref: 671911272
+Ref: 9-4-5#1911825
+Ref: catalogue-entry-trb-4912075
+Ref: 672912081
+Node: Answers for Chapter 10919691
+Ref: 10#1919862
+Ref: 10-5-1#1920106
+Ref: catalogue-entry-rtbst-15920110
+Ref: 673920116
+Ref: 10-5-2#1920479
+Ref: catalogue-entry-rtbst-16920651
+Ref: 674920657
+Node: Answers for Chapter 11921178
+Ref: 11-3#1921377
+Ref: catalogue-entry-rtbst-17921381
+Ref: catalogue-entry-rtbst-18921738
+Ref: 11-5-4#1922114
+Ref: 11-5-4#2922375
+Ref: catalogue-entry-rtavl-4922379
+Ref: 675922385
+Ref: 676922995
+Ref: 677923282
+Ref: 678923498
+Ref: 679923907
+Ref: 11-5-4#3924650
+Ref: catalogue-entry-rtavl-5924654
+Ref: 680924660
+Node: Answers for Chapter 13925258
+Ref: 13-4#1925457
+Ref: 13-7#1925602
+Ref: catalogue-entry-pbst-12925606
+Ref: 681925612
+Ref: catalogue-entry-pbst-13925908
+Ref: 682925914
+Ref: 683926635
+Ref: catalogue-entry-pbst-14926806
+Ref: 684926812
+Node: Answers for Chapter 14927365
+Ref: 14-2#1927533
+Ref: catalogue-entry-pbst-15927537
+Ref: catalogue-entry-pbst-16927886
+Ref: 14-4-2#1928264
+Ref: 14-4-2#2929046
+Node: Catalogue of Algorithms929135
+Node: Index946213
+
+End Tag Table
